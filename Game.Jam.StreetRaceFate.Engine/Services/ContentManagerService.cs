@@ -5,7 +5,8 @@ namespace Game.Jam.StreetRaceFate.Engine.Services;
 public interface IContentManagerService
 {
     void SetRootDirectory(string rootDirectory);
-    Texture2D Load(string assetName);
+    Texture2D LoadTexture2D(string assetName);
+    SpriteFont LoadSpriteFont(string assetName);
 }
 public class ContentManagerService : IContentManagerService
 {
@@ -21,8 +22,13 @@ public class ContentManagerService : IContentManagerService
         _contentManager.RootDirectory = rootDirectory;
     }
 
-    public Texture2D Load(string assetName)
+    public Texture2D LoadTexture2D(string assetName)
     {
         return _contentManager.Load<Texture2D>(assetName);
+    }
+
+    public SpriteFont LoadSpriteFont(string assetName)
+    {
+        return _contentManager.Load<SpriteFont>(assetName);
     }
 }

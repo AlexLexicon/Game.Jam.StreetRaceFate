@@ -1,17 +1,15 @@
-﻿using Game.Jam.StreetRaceFate.Engine;
-using Game.Jam.StreetRaceFate.Engine.Services;
+﻿using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 
-namespace Game.Jam.StreetRaceFate.Application;
-public class DogsSpriteBatch : IGameLoadable, IGameDrawable
+namespace Game.Jam.StreetRaceFate.Engine;
+public class FramerateSpriteBatch : IGameLoadable, IGameDrawable
 {
     private readonly IViewportService _viewportService;
     private readonly ISpriteBatchFactory _spriteBatchFactory;
     private readonly IWeakRefrenceManager _weakRefrenceManager;
 
-    public DogsSpriteBatch(
+    public FramerateSpriteBatch(
         IViewportService viewportService,
         ISpriteBatchFactory spriteBatchFactory,
         IWeakRefrenceManager weakRefrenceManager)
@@ -23,12 +21,12 @@ public class DogsSpriteBatch : IGameLoadable, IGameDrawable
 
     public void LoadContent()
     {
-        _spriteBatchFactory.CreateSpriteBatch<DogsSpriteBatch>();
+        _spriteBatchFactory.CreateSpriteBatch<FramerateSpriteBatch>();
     }
 
     public void Draw(GameTime gameTime)
     {
-        SpriteBatch spriteBatch = _spriteBatchFactory.GetSpriteBatch<DogsSpriteBatch>();
+        SpriteBatch spriteBatch = _spriteBatchFactory.GetSpriteBatch<FramerateSpriteBatch>();
 
         int viewportWidth = _viewportService.GetViewportWidth();
         int viewportHeight = _viewportService.GetViewportHeight();
@@ -39,9 +37,8 @@ public class DogsSpriteBatch : IGameLoadable, IGameDrawable
 
         spriteBatch.Begin(transformMatrix: matrix);
 
-        var dogs = _weakRefrenceManager.Get<ISpriteBatchDrawable<DogsSpriteBatch>>();
-        int x = dogs.Count();
-        foreach (ISpriteBatchDrawable<DogsSpriteBatch> spriteBatchDrawable in dogs)
+        var dogs = _weakRefrenceManager.Get<ISpriteBatchDrawable<FramerateSpriteBatch>>();
+        foreach (ISpriteBatchDrawable<FramerateSpriteBatch> spriteBatchDrawable in dogs)
         {
             spriteBatchDrawable.Draw(gameTime, spriteBatch);
         }

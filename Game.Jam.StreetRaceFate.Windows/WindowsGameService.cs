@@ -1,5 +1,4 @@
-﻿using Game.Jam.StreetRaceFate.Application;
-using Game.Jam.StreetRaceFate.Engine.Services;
+﻿using Game.Jam.StreetRaceFate.Engine.Services;
 
 namespace Game.Jam.StreetRaceFate.Windows;
 public interface IWindowsGameService
