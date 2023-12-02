@@ -5,56 +5,32 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace Game.Jam.StreetRaceFate.Application;
-public class Dog : IGameLoadable, IGameDrawable
+public class Dog : IGameInitalizable, IGameLoadable, ISpriteBatchDrawable<DogsSpriteBatch>
 {
     private readonly IContentManagerService _contentManagerService;
-    private readonly IGraphicsService _graphicsService;
-    private readonly IViewportService _viewportService;
 
-    public Dog(
-        IContentManagerService contentManagerService,
-        IGraphicsService graphicsService,
-        IViewportService viewportService)
+    public Dog(IContentManagerService contentManagerService)
     {
         _contentManagerService = contentManagerService;
-        _graphicsService = graphicsService;
-        _viewportService = viewportService;
     }
 
-    private SpriteBatch? SpriteBatch { get; set; }
     private Texture2D? DogTexture { get; set; }
+    private int X { get; set; }
+    private int Y { get; set; }
 
     public void LoadContent()
     {
-        SpriteBatch = _graphicsService.CreateSpriteBatch();
-
         DogTexture = _contentManagerService.Load("dog.tan");
-
-        x = Random.Shared.Next(0, 100);
-        y = Random.Shared.Next(0, 100);
     }
 
-    private int x { get; set; }
-    private int  y { get; set; }
-
-    public void Draw(GameTime gameTime)
+    public void Initalize()
     {
-        //_graphicsService.Clear(Color.Black);
+        X = Random.Shared.Next(0, 200);
+        Y = Random.Shared.Next(0, 200);
+    }
 
-        if (SpriteBatch is not null && DogTexture is not null)
-        {
-            int viewportWidth = _viewportService.GetViewportWidth();
-            int viewportHeight = _viewportService.GetViewportHeight();
-
-            float scaleX = (float)viewportWidth / 640;
-            float scaleY = (float)viewportHeight / 480;
-            Matrix matrix = Matrix.CreateScale(scaleX, scaleY, 1.0f);
-
-            SpriteBatch.Begin(transformMatrix: matrix);
-
-            SpriteBatch.Draw(DogTexture, new Rectangle(x, y, 32, 32), Color.White);
-
-            SpriteBatch.End();
-        }
+    public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+    {
+        spriteBatch.Draw(DogTexture, new Rectangle(X, Y, 32, 32), Color.White);
     }
 }

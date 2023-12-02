@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Game.Jam.StreetRaceFate.Engine.Services;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Game.Jam.StreetRaceFate.Engine.Services;
+namespace Game.Jam.StreetRaceFate.Engine;
 public class GameAggregator : Microsoft.Xna.Framework.Game
 {
     private readonly IWeakRefrenceManager _weakRefrenceManager;
@@ -13,18 +14,20 @@ public class GameAggregator : Microsoft.Xna.Framework.Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
+        foreach (var gameInitalizable in _weakRefrenceManager.Get<IGameInitalizable>())
+        {
+            gameInitalizable.Initalize();
+        }
 
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        foreach (var loadableEntity in _weakRefrenceManager.Get<IGameLoadable>())
+        foreach (var gameLoadable in _weakRefrenceManager.Get<IGameLoadable>())
         {
-            loadableEntity.LoadContent();
+            gameLoadable.LoadContent();
         }
-        // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
@@ -34,16 +37,19 @@ public class GameAggregator : Microsoft.Xna.Framework.Game
             Exit();
         }
 
-        // TODO: Add your update logic here
+        foreach (var gameUpdatable in _weakRefrenceManager.Get<IGameUpdatable>())
+        {
+            gameUpdatable.Update(gameTime);
+        }
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        foreach (var drawableEntity in _weakRefrenceManager.Get<IGameDrawable>())
+        foreach (var gameDrawable in _weakRefrenceManager.Get<IGameDrawable>())
         {
-            drawableEntity.Draw(gameTime);
+            gameDrawable.Draw(gameTime);
         }
 
         base.Draw(gameTime);

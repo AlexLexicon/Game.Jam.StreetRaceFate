@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Game.Jam.StreetRaceFate.Engine.Extensions;
 public static class ServiceCollectionExtensions
@@ -25,40 +27,57 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<IContentManagerService, ContentManagerService>();
-        services.AddSingleton<IWeakRefrenceManager, WeakRefrenceManager>();
         services.AddSingleton<IGameService, GameService>();
         services.AddSingleton<IGameWindowService, GameWindowService>();
         services.AddSingleton<IGraphicsDeviceManagerService, GraphicsDeviceManagerService>();
         services.AddSingleton<IGraphicsDeviceProvider,  GraphicsDeviceProvider>();
         services.AddSingleton<IGraphicsService, GraphicsService>();
+        services.AddSingleton<ISpriteBatchFactory, SpriteBatchFactory>();
         services.AddSingleton<IViewportService, ViewportService>();
+        services.AddSingleton<IWeakRefrenceManager, WeakRefrenceManager>();
     }
 
-    public static void AddEntity<TEntity>(this IServiceCollection services, ServiceLifetime lifetime)
+    public static void AddGameObject<TGameObject>(this IServiceCollection services, ServiceLifetime lifetime)
     {
-        services.Add(new ServiceDescriptor(typeof(TEntity), (sp) =>
+        Type gameObjectType = typeof(TGameObject);
+        services.Add(new ServiceDescriptor(gameObjectType, (sp) =>
         {
-            var entity = ActivatorUtilities.CreateInstance(sp, typeof(TEntity));
-            var entityAggregator = sp.GetRequiredService<IWeakRefrenceManager>();
+            var gameObject = ActivatorUtilities.CreateInstance(sp, gameObjectType);
 
-            if (entity is IGameDrawable drawableEntity)
+            var weakRefrenceManager = sp.GetRequiredService<IWeakRefrenceManager>();
+            if (gameObject is IGameDrawable drawableEntity)
             {
-                entityAggregator.Add(drawableEntity);
+                weakRefrenceManager.Add(drawableEntity);
             }
-            if (entity is IGameInitalizable inializableEntity)
+            if (gameObject is IGameInitalizable inializableEntity)
             {
-                entityAggregator.Add(inializableEntity);
+                weakRefrenceManager.Add(inializableEntity);
             }
-            if (entity is IGameLoadable loadableEntity)
+            if (gameObject is IGameLoadable loadableEntity)
             {
-                entityAggregator.Add(loadableEntity);
+                weakRefrenceManager.Add(loadableEntity);
             }
-            if (entity is IGameUpdatable updatableEntity)
+            if (gameObject is IGameUpdatable updatableEntity)
             {
-                entityAggregator.Add(updatableEntity);
+                weakRefrenceManager.Add(updatableEntity);
             }
 
-            return entity;
+            Type spriteBatchDrawableType = typeof(ISpriteBatchDrawable<>);
+            List<Type> spriteBatchDrawableGenericArgumentTypes = gameObjectType
+                .GetInterfaces()
+                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == spriteBatchDrawableType)
+                .Select(t => t.GetGenericArguments().First())
+                .ToList();
+            if (spriteBatchDrawableGenericArgumentTypes.Count is > 0)
+            {
+                foreach (Type spriteBatchDrawableGenericArgumentType in spriteBatchDrawableGenericArgumentTypes)
+                {
+                    Type interfaceType = spriteBatchDrawableType.MakeGenericType(spriteBatchDrawableGenericArgumentType);
+                    weakRefrenceManager.Add(interfaceType, gameObject);
+                }
+            }
+
+            return gameObject;
         }, lifetime));
     }
 }

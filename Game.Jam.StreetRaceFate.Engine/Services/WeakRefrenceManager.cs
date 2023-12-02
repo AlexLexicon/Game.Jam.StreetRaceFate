@@ -4,8 +4,9 @@ using System.Collections.Generic;
 namespace Game.Jam.StreetRaceFate.Engine.Services;
 public interface IWeakRefrenceManager
 {
-    void Add<TEntityInterface>(TEntityInterface refrence);
-    IEnumerable<TEntityInterface> Get<TEntityInterface>();
+    void Add<TInterface>(TInterface refrence) where TInterface : notnull;
+    void Add(Type interfaceType, object refrence);
+    IEnumerable<TInterface> Get<TInterface>() where TInterface : notnull;
 }
 public class WeakRefrenceManager : IWeakRefrenceManager
 {
@@ -16,33 +17,37 @@ public class WeakRefrenceManager : IWeakRefrenceManager
         _interfaceToWeakReferences = new Dictionary<Type, List<WeakReference>>();
     }
 
-    public void Add<TEntityInterface>(TEntityInterface refrence)
+    public void Add<TInterface>(TInterface refrence) where TInterface : notnull
+    {
+        Add(typeof(TInterface), refrence);
+    }
+
+    public void Add(Type interfaceType, object refrence)
     {
         var weakRefrence = new WeakReference(refrence);
 
-        Type key = typeof(TEntityInterface);
-        if (_interfaceToWeakReferences.TryGetValue(key, out List<WeakReference>? weakReferences))
+        if (_interfaceToWeakReferences.TryGetValue(interfaceType, out List<WeakReference>? weakReferences))
         {
             weakReferences.Add(weakRefrence);
         }
         else
         {
-            _interfaceToWeakReferences.Add(key, new List<WeakReference>
+            _interfaceToWeakReferences.Add(interfaceType, new List<WeakReference>
             {
                 weakRefrence,
             });
         }
     }
 
-    public IEnumerable<TEntityInterface> Get<TEntityInterface>()
+    public IEnumerable<TInterface> Get<TInterface>() where TInterface : notnull
     {
-        if (_interfaceToWeakReferences.TryGetValue(typeof(TEntityInterface), out List<WeakReference>? weakReferences))
+        if (_interfaceToWeakReferences.TryGetValue(typeof(TInterface), out List<WeakReference>? weakReferences))
         {
             foreach (WeakReference weakReference in weakReferences)
             {
                 if (weakReference.IsAlive && weakReference.Target is not null)
                 {
-                    yield return (TEntityInterface)weakReference.Target;
+                    yield return (TInterface)weakReference.Target;
                 }
             }
         }

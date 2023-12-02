@@ -6,6 +6,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddApplication(this IServiceCollection services)
     {
-        services.AddEntity<Dog>(ServiceLifetime.Transient);
+        services.AddGameObject<Dog>(ServiceLifetime.Transient);
+        services.AddGameObject<DogsSpriteBatch>(ServiceLifetime.Singleton);
     }
 }
