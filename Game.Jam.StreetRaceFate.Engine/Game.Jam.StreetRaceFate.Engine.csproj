@@ -12,8 +12,4 @@
     </PackageReference>
   </ItemGroup>
   
-  <ItemGroup>
-    <ProjectReference Include="..\Game.Jam.StreetRaceFate.Engine.Abstractions\Game.Jam.StreetRaceFate.Engine.Abstractions.csproj" />
-  </ItemGroup>
-  
 </Project>

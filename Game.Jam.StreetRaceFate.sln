@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Jam.StreetRaceFate.Windows", "Game.Jam.StreetRaceFate.Windows\Game.Jam.StreetRaceFate.Windows.csproj", "{B4A0CEBC-73EB-40D5-A565-85C3160B080E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Jam.StreetRaceFate.Windows", "Game.Jam.StreetRaceFate.Windows\Game.Jam.StreetRaceFate.Windows.csproj", "{B4A0CEBC-73EB-40D5-A565-85C3160B080E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Jam.StreetRaceFate.Application", "Game.Jam.StreetRaceFate.Application\Game.Jam.StreetRaceFate.Application.csproj", "{4E9DF663-51AA-4410-822D-5F1764666214}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Jam.StreetRaceFate.Engine", "Game.Jam.StreetRaceFate.Engine\Game.Jam.StreetRaceFate.Engine.csproj", "{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Jam.StreetRaceFate.Engine", "Game.Jam.StreetRaceFate.Engine\Game.Jam.StreetRaceFate.Engine.csproj", "{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Jam.StreetRaceFate.Engine.Abstractions", "Game.Jam.StreetRaceFate.Engine.Abstractions\Game.Jam.StreetRaceFate.Engine.Abstractions.csproj", "{E038C0CE-70E9-47E3-8747-80C98C2C1CC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Jam.StreetRaceFate.Application", "Game.Jam.StreetRaceFate.Application\Game.Jam.StreetRaceFate.Application.csproj", "{2D266F9A-D704-44B3-ACA8-7C13A3AEF37D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +19,14 @@ Global
 		{B4A0CEBC-73EB-40D5-A565-85C3160B080E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4A0CEBC-73EB-40D5-A565-85C3160B080E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4A0CEBC-73EB-40D5-A565-85C3160B080E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E9DF663-51AA-4410-822D-5F1764666214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E9DF663-51AA-4410-822D-5F1764666214}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E9DF663-51AA-4410-822D-5F1764666214}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E9DF663-51AA-4410-822D-5F1764666214}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7CDFF11-D5FC-4422-9E19-D96CA6DB5212}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E038C0CE-70E9-47E3-8747-80C98C2C1CC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E038C0CE-70E9-47E3-8747-80C98C2C1CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E038C0CE-70E9-47E3-8747-80C98C2C1CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E038C0CE-70E9-47E3-8747-80C98C2C1CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D266F9A-D704-44B3-ACA8-7C13A3AEF37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D266F9A-D704-44B3-ACA8-7C13A3AEF37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D266F9A-D704-44B3-ACA8-7C13A3AEF37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D266F9A-D704-44B3-ACA8-7C13A3AEF37D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

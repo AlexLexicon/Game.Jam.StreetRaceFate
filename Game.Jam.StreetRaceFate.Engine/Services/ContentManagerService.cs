@@ -1,15 +1,28 @@
-﻿namespace Game.Jam.StreetRaceFate.Engine.Services;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace Game.Jam.StreetRaceFate.Engine.Services;
+public interface IContentManagerService
+{
+    void SetRootDirectory(string rootDirectory);
+    Texture2D Load(string assetName);
+}
 public class ContentManagerService : IContentManagerService
 {
-    private readonly Microsoft.Xna.Framework.Game _game;
+    private readonly ContentManager _contentManager;
 
-    public ContentManagerService(Microsoft.Xna.Framework.Game game)
+    public ContentManagerService(ContentManager contentManager)
     {
-        _game = game;
+        _contentManager = contentManager;
     }
 
     public void SetRootDirectory(string rootDirectory)
     {
-        _game.Content.RootDirectory = rootDirectory;
+        _contentManager.RootDirectory = rootDirectory;
+    }
+
+    public Texture2D Load(string assetName)
+    {
+        return _contentManager.Load<Texture2D>(assetName);
     }
 }

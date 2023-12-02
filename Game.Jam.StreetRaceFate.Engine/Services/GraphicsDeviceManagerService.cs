@@ -1,10 +1,16 @@
-﻿namespace Game.Jam.StreetRaceFate.Engine.Services;
+﻿using Microsoft.Xna.Framework;
+
+namespace Game.Jam.StreetRaceFate.Engine.Services;
+public interface IGraphicsDeviceManagerService
+{
+}
+
 public class GraphicsDeviceManagerService : IGraphicsDeviceManagerService
 {
-    private readonly Microsoft.Xna.Framework.Game _game;
+    private readonly GraphicsDeviceManager _graphicsDeviceManager;
 
-    public GraphicsDeviceManagerService(Microsoft.Xna.Framework.Game game)
+    public GraphicsDeviceManagerService(GraphicsDeviceManager graphicsDeviceManager)
     {
-        _game = game;
+        _graphicsDeviceManager = graphicsDeviceManager;
     }
 }
