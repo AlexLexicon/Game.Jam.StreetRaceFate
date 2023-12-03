@@ -40,16 +40,34 @@ public static class ServiceCollectionExtensions
             options.SetSbDrawPrioirty(4);
             options.AddToSpriteBatch<BackgroundSpriteBatch>();
         });
-        services.AddGameObject<Road>(options =>
+        services.AddGameObject<Trees>(options =>
         {
             options.Lifetime = ServiceLifetime.Singleton;
             options.SetSbDrawPrioirty(5);
             options.AddToSpriteBatch<BackgroundSpriteBatch>();
         });
-        services.AddGameObject<Rail>(options =>
+        services.AddGameObject<Road>(options =>
         {
             options.Lifetime = ServiceLifetime.Singleton;
             options.SetSbDrawPrioirty(6);
+            options.AddToSpriteBatch<BackgroundSpriteBatch>();
+        });
+        services.AddGameObject<Rail>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.SetSbDrawPrioirty(7);
+            options.AddToSpriteBatch<BackgroundSpriteBatch>();
+        });
+        services.AddGameObject<TreesShadows>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.SetSbDrawPrioirty(8);
+            options.AddToSpriteBatch<BackgroundSpriteBatch>();
+        });
+        services.AddGameObject<Lights>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.SetSbDrawPrioirty(9);
             options.AddToSpriteBatch<BackgroundSpriteBatch>();
         });
         services.AddGameObject<Car>(options =>
@@ -58,6 +76,14 @@ public static class ServiceCollectionExtensions
             options.AddToSpriteBatch<CarsSpriteBatch>(options =>
             {
                 options.SetDrawPriority(2);
+            });
+        });
+        services.AddGameObject<Explosion>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Transient;
+            options.AddToSpriteBatch<ExplosionSpriteBatch>(options =>
+            {
+                options.SetDrawPriority(3);
             });
         });
         services.AddGameObject<RaceText>(options =>

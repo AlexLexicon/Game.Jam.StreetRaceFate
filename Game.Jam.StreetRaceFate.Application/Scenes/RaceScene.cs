@@ -22,6 +22,9 @@ public class RaceScene : IGameScene
     private readonly Road _road;
     private readonly Rail _rail;
     private readonly IRaceService _raceService;
+    private readonly Trees _trees;
+    private readonly TreesShadows _treesShadows;
+    private readonly Lights _lights;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
@@ -35,7 +38,10 @@ public class RaceScene : IGameScene
         CityFar cityFar,
         CityClose cityClose,
         Rail rail,
-        IRaceService raceService)
+        IRaceService raceService,
+        Trees trees,
+        TreesShadows treesShadows,
+        Lights lights)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -51,6 +57,9 @@ public class RaceScene : IGameScene
         _cityClose = cityClose;
         _rail = rail;
         _raceService = raceService;
+        _trees = trees;
+        _treesShadows = treesShadows;
+        _lights = lights;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
@@ -68,44 +77,54 @@ public class RaceScene : IGameScene
         _raceText.IsVisible = IsReadyToRace;
         _raceText.Text = ReadyCountdown.ToString();
 
-        if (!_raceService.IsRaceStarted())
+        if (!_raceService.IsRaceOver())
         {
-            KeyboardState state = Keyboard.GetState();
-
-            int count = KeyToCar.Count;
-
-            if (count is > 0)
+            if (!_raceService.IsRaceStarted())
             {
-                bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
-                if (isReadyToRace && !IsReadyToRace)
-                {
-                    IsReadyToRace = true;
-                    ReadyCountdown = 3;
-                }
-                else if (!isReadyToRace && IsReadyToRace)
-                {
-                    IsReadyToRace = false;
-                }
-            }
+                KeyboardState state = Keyboard.GetState();
 
-            if (count is < ViewService.MAX_NUM_OF_PLAYERS)
-            {
-                foreach (var key in _keysService.GetValidKeys())
-                {
-                    AddCar(state, key);
-                }
-            }
+                int count = KeyToCar.Count;
 
-            if (IsReadyToRace)
-            {
-                _delayService.Delay(gameTime, 1.25f, () =>
+                if (count is > 0)
                 {
-                    ReadyCountdown--;
-                    if (ReadyCountdown is <= 0)
+                    bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
+                    if (isReadyToRace && !IsReadyToRace)
+                    {
+                        IsReadyToRace = true;
+                        ReadyCountdown = 3;
+                    }
+                    else if (!isReadyToRace && IsReadyToRace)
                     {
                         IsReadyToRace = false;
-                        _raceService.StartRace();
                     }
+                }
+
+                if (count is < ViewService.MAX_NUM_OF_PLAYERS)
+                {
+                    foreach (var key in _keysService.GetValidKeys())
+                    {
+                        AddCar(state, key);
+                    }
+                }
+
+                if (IsReadyToRace)
+                {
+                    _delayService.Delay(gameTime, 1.25f, () =>
+                    {
+                        ReadyCountdown--;
+                        if (ReadyCountdown is <= 0)
+                        {
+                            IsReadyToRace = false;
+                            _raceService.StartRace();
+                        }
+                    });
+                }
+            }
+            else
+            {
+                _delayService.Delay(gameTime, 20.2f, () =>
+                {
+                    _raceService.StopRace();
                 });
             }
         }
@@ -150,8 +169,10 @@ public class RaceScene : IGameScene
         }
     }
 
+    private Color Bg { get; } = new Color(240, 205, 153);
+
     public void Draw(GameTime gameTime)
     {
-        _graphicsService.Clear(Color.Blue);
+        _graphicsService.Clear(Bg);
     }
 }

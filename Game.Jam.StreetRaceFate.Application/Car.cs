@@ -1,9 +1,11 @@
 ﻿using Game.Jam.StreetRaceFate.Application.Service;
 using Game.Jam.StreetRaceFate.Engine;
+using Game.Jam.StreetRaceFate.Engine.Factories;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Game.Jam.StreetRaceFate.Application;
 public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<CarsSpriteBatch>
@@ -15,6 +17,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private readonly IOscillateService _oscillateService;
     private readonly IKeysService _keysService;
     private readonly IRaceService _raceService;
+    private readonly IGraphicsDeviceManagerService _graphicsDeviceManagerService;
+    private readonly IGameObjectFactory _gameObjectFactory;
 
     public Car(
         IContentManagerService contentManagerService,
@@ -23,7 +27,9 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         IDelayService delayService,
         IOscillateService oscillateService,
         IKeysService keysService,
-        IRaceService raceService)
+        IRaceService raceService,
+        IGraphicsDeviceManagerService graphicsDeviceManagerService,
+        IGameObjectFactory gameObjectFactory)
     {
         _contentManagerService = contentManagerService;
         _movementService = movementService;
@@ -34,6 +40,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         Speed = 0.25f;
         _keysService = keysService;
         _raceService = raceService;
+        _graphicsDeviceManagerService = graphicsDeviceManagerService;
+        _gameObjectFactory = gameObjectFactory;
     }
 
     public int RowIndex { get; set; }
@@ -60,15 +68,24 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Vector2 Position { get; set; }
     private Vector2 TargetPosition { get; set; }
 
-    private Vector2 CarPosition => new Vector2(Position.X, Position.Y + CarOscillation);
-    private Vector2 LeftWheelPosition => new Vector2(Position.X + 13, Position.Y + 21);
-    private Vector2 RightWheelPosition => new Vector2(Position.X + 88, Position.Y + 21);
+    private Vector2 CarPosition => new Vector2(Position.X + CarXOscillation, Position.Y + CarYOscillation);
+    private Vector2 LeftWheelPosition => new Vector2(Position.X + 13 + CarXOscillation, Position.Y + 21);
+    private Vector2 RightWheelPosition => new Vector2(Position.X + 88 + CarXOscillation, Position.Y + 21);
     private Vector2 KeyBoxPosition => new Vector2(Position.X + CarTexture.Width + 21, Position.Y);
     private Vector2 KeyBoxTextPosition => new Vector2(KeyBoxPosition.X + KeyBox.Width / 2, KeyBoxPosition.Y + KeyBox.Height / 2);
+    private Vector2 Center => new Vector2(Position.X + CarTexture.Width / 2, Position.Y + CarTexture.Height / 2);
     private float WheelRotation { get; set; }
-    private int CarOscillation { get; set; }
+    private int CarYOscillation { get; set; }
+    private int CarXOscillation { get; set; }
     private bool IsVisible { get; set; }
     public bool IsReadyToRace { get; private set; }
+
+    private int MinXOsc { get; set; }
+    private int MaxXOsc { get; set; }
+
+    private bool StopOsc { get; set; }
+
+    private bool IsExploded { get; set; }
 
     public void LoadContent()
     {
@@ -97,6 +114,9 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         IsVisible = true;
         IsReadyToRace = false;
+
+        MinXOsc = Random.Shared.Next(-16, 0);
+        MaxXOsc = Random.Shared.Next(0, 16);
     }
 
     public void Update(GameTime gameTime)
@@ -104,6 +124,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         if (CurrentState != State.Racing && _raceService.IsRaceStarted())
         {
             CurrentState = State.Racing;
+            TargetPosition = new Vector2(_graphicsDeviceManagerService.GetResolution().X / 2 - CarTexture.Width / 2, Position.Y);
+            Speed = (float)Random.Shared.Next(5,7) * 0.001f;
         }
 
         if (CurrentState == State.Readying)
@@ -115,20 +137,75 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         if (reachedTarget && CurrentState == State.New)
         {
             CurrentState = State.Readying;
+            Explode();
         }
         else
         {
-            WheelRotation += Vector2.Distance(Position, TargetPosition) / 750;
+            float s1 = Vector2.Distance(Position, TargetPosition) / 750;
+            if (CurrentState == State.Racing)
+            {
+                float s2 = _raceService.GetRailSpeed();
+                WheelRotation += Math.Max(s1, s2);
+            }
+            else
+            {
+                WheelRotation += s1;
+            }
+        }
+
+        if (CurrentState == State.Racing && !StopOsc)
+        {
+            _delayService.Delay(gameTime, 12f, () =>
+            {
+                StopOsc = true;
+            });
         }
 
         _delayService.Delay(gameTime, (1 - Speed) / 4, () =>
         {
             _oscillateService.Oscillate(0, 2, o =>
             {
-                CarOscillation = o;
+                CarYOscillation = o;
             });
+            if (CurrentState == State.Racing)
+            {
+                _oscillateService.Oscillate(MinXOsc, MaxXOsc, o =>
+                {
+                    if (!StopOsc || CarXOscillation != 0)
+                    {
+                        CarXOscillation = o;
+                    }
+                });
+            }
         });
+
+        if (_raceService.IsRaceOver() && !IsExploded)
+        {
+            Explode();
+        }
     }
+
+    public void Explode()
+    {
+        IsExploded = true;
+        var r = Random.Shared;
+        int total = r.Next(6, 15);
+        for (int count = 0; count < total; count++)
+        {
+            var ex = _gameObjectFactory.Create<Explosion>();
+
+            var xx = r.Next(-CarTexture.Width / 2, CarTexture.Width / 2);
+            var yy = r.Next(-CarTexture.Height / 2, CarTexture.Height / 2);
+
+            Vector2 pos = new Vector2(Center.X + xx, Center.Y + yy);
+
+            ex.Spawn(pos, (float)count / 5);
+        }
+    }
+
+    private class QueuedExpolosion
+    { 
+        }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {

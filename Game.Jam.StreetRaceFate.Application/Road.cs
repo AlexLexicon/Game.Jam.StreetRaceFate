@@ -19,7 +19,7 @@ public class Road : IGameLoadable, ISpriteBatchDrawable<BackgroundSpriteBatch>
 
     public void LoadContent()
     {
-        RoadTexture = _contentManagerService.LoadTexture2D("road");
+        RoadTexture = _contentManagerService.LoadTexture2D("road.better");
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

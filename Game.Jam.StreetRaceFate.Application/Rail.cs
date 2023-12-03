@@ -41,8 +41,8 @@ public class Rail : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBat
 
     public void LoadContent()
     {
-        LeftTexture = _contentManagerService.LoadTexture2D("rail");
-        RightTexture = _contentManagerService.LoadTexture2D("rail");
+        LeftTexture = _contentManagerService.LoadTexture2D("rail.better");
+        RightTexture = _contentManagerService.LoadTexture2D("rail.better");
 
         StopTarget = new Vector2(-LeftTexture.Width, 0);
         RightPosition = ResetPosition();

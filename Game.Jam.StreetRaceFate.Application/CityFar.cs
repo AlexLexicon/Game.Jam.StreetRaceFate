@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Game.Jam.StreetRaceFate.Application;
 public class CityFar : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<BackgroundSpriteBatch>
 {
-    private const int yOffset = -2;
+    private const int yOffset = -12;
 
     private readonly IDrawService _drawService;
     private readonly IContentManagerService _contentManagerService;

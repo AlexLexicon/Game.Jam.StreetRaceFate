@@ -37,6 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:car.pixel.png
 
+#begin chill.trim.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:chill.trim.wav
+
 #begin city.close.small.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -61,6 +67,18 @@
 /processorParam:TextureFormat=Color
 /build:city.far.small.png
 
+#begin explosion.edgeless.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:explosion.edgeless.png
+
 #begin keybox.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -80,6 +98,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Large.spritefont
 
+#begin lights.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:lights.png
+
 #begin Normal.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -87,19 +117,13 @@
 /processorParam:TextureFormat=Compressed
 /build:Normal.spritefont
 
-#begin rail.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:rail.png
+#begin race.trim.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:race.trim.wav
 
-#begin road.png
+#begin rail.better.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -109,7 +133,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:road.png
+/build:rail.better.png
+
+#begin road.better.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:road.better.png
 
 #begin sun.small.png
 /importer:TextureImporter
@@ -134,6 +170,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tire.pixel.png
+
+#begin tree.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tree.png
+
+#begin tree.shadows.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tree.shadows.png
 
 #begin wheelwell.pixel.png
 /importer:TextureImporter
