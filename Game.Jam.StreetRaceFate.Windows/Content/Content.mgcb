@@ -487,6 +487,18 @@
 /processorParam:Quality=Best
 /build:clapping.wav
 
+#begin cones.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cones.png
+
 #begin crowd.back.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -632,6 +644,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:news.cool.png
+
+#begin news.deadly.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:news.deadly.png
 
 #begin news.epic.png
 /importer:TextureImporter

@@ -6,6 +6,7 @@ public interface IGraphicsService
 {
     void Clear(Color color);
     SpriteBatch CreateSpriteBatch();
+    Texture2D CreateTexture(int width, int height);
 }
 public class GraphicsService : IGraphicsService
 {
@@ -24,5 +25,10 @@ public class GraphicsService : IGraphicsService
     public SpriteBatch CreateSpriteBatch()
     {
         return new SpriteBatch(_graphicsDeviceProvider.GraphicsDevice);
+    }
+
+    public Texture2D CreateTexture(int width, int height)
+    {
+        return new Texture2D(_graphicsDeviceProvider.GraphicsDevice, width, height);
     }
 }

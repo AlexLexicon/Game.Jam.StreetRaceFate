@@ -141,12 +141,12 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         LoserTexture = _contentManagerService.LoadTexture2D("lose.big");
         DeathTrophyTexture = _contentManagerService.LoadTexture2D("deathtrophy.big");
 
-        if (Id is 0)
-        {
-            BlockTexture = _contentManagerService.LoadTexture2D("block");
-            var w = _viewportService.GetViewportWidth();
-            BlockPosition = new Vector2(((w * 10) + (w / 3)) - 200, 203);
-        }
+        //if (Id is 0)
+        //{
+        //    BlockTexture = _contentManagerService.LoadTexture2D("block");
+        //    var w = _viewportService.GetViewportWidth();
+        //    BlockPosition = new Vector2(((w * 10) + (w / 3)) - 200, 203);
+        //}
     }
 
     public void Initalize()
@@ -255,9 +255,15 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
                 if (Position.X < 0)
                 {
                     MoveToStart();
-                    if (IsWinner)
+                }
+
+                if (IsWinner)
+                {
+                    float middle = (_viewportService.GetViewportWidth() / 2) - 300;
+                    float forward = TargetPosition.X + 256;
+                    if (middle > forward)
                     {
-                        TargetPosition = new Vector2(TargetPosition.X + 256, TargetPosition.Y);
+                        TargetPosition = new Vector2(forward, TargetPosition.Y);
                     }
                 }
             }

@@ -29,6 +29,8 @@ public class RaceScene : IGameScene, IEndDraw
     private readonly IContentManagerService _contentManagerService;
     private readonly News _news;
     private readonly Blockade _blockade;
+    private readonly Cones _cones;
+    private readonly SplashScreen _splashScreen;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
@@ -49,7 +51,9 @@ public class RaceScene : IGameScene, IEndDraw
         IViewportService viewportService,
         IContentManagerService contentManagerService,
         News news,
-        Blockade blockade)
+        Blockade blockade,
+        Cones cones,
+        SplashScreen splashScreen)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -72,6 +76,8 @@ public class RaceScene : IGameScene, IEndDraw
         _contentManagerService = contentManagerService;
         _news = news;
         _blockade = blockade;
+        _cones = cones;
+        _splashScreen = splashScreen;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
@@ -202,15 +208,16 @@ public class RaceScene : IGameScene, IEndDraw
                 winningCar.IsWinner = true;
                 _news.IsCool = true;
             }
+            else if (explodedCars.Count is <= 0)
+            {
+                Boo();
+                _sky.PlayChill();
+                _news.IsLame = true;
+            }
             else
             {
-                if (explodedCars.Count is <= 0)
-                {
-                    Boo();
-                    _sky.PlayChill();
-                    _news.IsLame = true;
-                }
-            }
+                _news.IsDeadly = true;
+            } 
 
             WinnerFound = true;
         }

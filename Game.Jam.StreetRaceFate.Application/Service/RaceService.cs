@@ -56,7 +56,7 @@ public class RaceService : IRaceService
 
     public float GetCloseCitySpeed()
     {
-        return GetRailSpeed() / 2;
+        return GetRailSpeed() / 10;
     }
 
     public float GetFarCitySpeed()

@@ -76,6 +76,12 @@ public static class ServiceCollectionExtensions
             options.SetSbDrawPrioirty(10);
             options.AddToSpriteBatch<BackgroundSpriteBatch>();
         });
+        services.AddGameObject<Cones>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.SetSbDrawPrioirty(11);
+            options.AddToSpriteBatch<BackgroundSpriteBatch>();
+        });
         services.AddGameObject<Car>(options =>
         {
             options.Lifetime = ServiceLifetime.Transient;
@@ -113,6 +119,14 @@ public static class ServiceCollectionExtensions
             options.AddToSpriteBatch<RaceTextSpriteBatch>(options =>
             {
                 options.SetDrawPriority(6);
+            });
+        });
+        services.AddGameObject<SplashScreen>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.AddToSpriteBatch<SplashScreenSpriteBatch>(options =>
+            {
+                options.SetDrawPriority(7);
             });
         });
     }

@@ -30,18 +30,21 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
     private Texture2D CoolTexture { get; set; }
     private Texture2D LameTexture { get; set; }
     private Texture2D EpicTexture { get; set; }
+    private Texture2D DeadlyTexture { get; set; }
 
     private Vector2 Position { get; set; }
 
     public bool IsCool { get; set; }
     public bool IsLame { get; set; }
     public bool IsEpic { get; set; }
+    public bool IsDeadly { get; set; }
 
     public void LoadContent()
     {
         CoolTexture = _contentManagerService.LoadTexture2D("news.cool");
         LameTexture = _contentManagerService.LoadTexture2D("news.lame");
         EpicTexture = _contentManagerService.LoadTexture2D("news.epic");
+        DeadlyTexture = _contentManagerService.LoadTexture2D("news.deadly");
 
         var w = _viewportService.GetViewportWidth();
         var h = _viewportService.GetViewportHeight();
@@ -61,6 +64,10 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
         else if (IsEpic)
         {
             _drawService.Draw(spriteBatch, EpicTexture, Position, scale: 2.5f);
+        }
+        else if (IsDeadly)
+        {
+            _drawService.Draw(spriteBatch, DeadlyTexture, Position, scale: 2.5f);
         }
     }
 }
