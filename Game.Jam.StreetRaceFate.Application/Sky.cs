@@ -73,7 +73,7 @@ public class Sky : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgroun
         if (!IsStarted && racing)
         {
             MediaPlayer.IsRepeating = false;
-            //MediaPlayer.Play(RaceSong);
+            MediaPlayer.Play(RaceSong);
             IsStarted = true;
             IsChill = false;
         }
@@ -87,7 +87,7 @@ public class Sky : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgroun
     public void PlayChill()
     {
         MediaPlayer.IsRepeating = true;
-        //MediaPlayer.Play(ChillSong);
+        MediaPlayer.Play(ChillSong);
         IsChill = true;
         IsStarted = false;
     }
