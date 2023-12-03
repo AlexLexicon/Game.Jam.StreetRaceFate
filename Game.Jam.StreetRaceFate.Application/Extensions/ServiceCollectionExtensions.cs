@@ -70,6 +70,12 @@ public static class ServiceCollectionExtensions
             options.SetSbDrawPrioirty(9);
             options.AddToSpriteBatch<BackgroundSpriteBatch>();
         });
+        services.AddGameObject<Crowd>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Transient;
+            options.SetSbDrawPrioirty(10);
+            options.AddToSpriteBatch<BackgroundSpriteBatch>();
+        });
         services.AddGameObject<Car>(options =>
         {
             options.Lifetime = ServiceLifetime.Transient;

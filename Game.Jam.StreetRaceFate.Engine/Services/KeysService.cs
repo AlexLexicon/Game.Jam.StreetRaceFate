@@ -144,7 +144,7 @@ public class KeysService : IKeysService
             Keys.D0 => "0",
             Keys.OemMinus => "_",
             Keys.OemPlus => "=",
-            Keys.Back => "<-",
+            Keys.Back => "Back",
             Keys.Insert => "Ins",
             Keys.Home => "Home",
             Keys.PageUp => "PgUp",

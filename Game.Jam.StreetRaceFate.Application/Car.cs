@@ -61,7 +61,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Texture2D WheelWellsTexture { get; set; }
     private Texture2D LeftWheel { get; set; }
     private Texture2D RightWheel { get; set; }
-    public Texture2D KeyBox { get; set; }
+    public Texture2D ThrottleTexture { get; set; }
     private SpriteFont SpriteFont { get; set; }
 
     private float Speed { get; set; }
@@ -71,8 +71,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Vector2 CarPosition => new Vector2(Position.X + CarXOscillation, Position.Y + CarYOscillation);
     private Vector2 LeftWheelPosition => new Vector2(Position.X + 13 + CarXOscillation, Position.Y + 21);
     private Vector2 RightWheelPosition => new Vector2(Position.X + 88 + CarXOscillation, Position.Y + 21);
-    private Vector2 KeyBoxPosition => new Vector2(Position.X + CarTexture.Width + 21, Position.Y);
-    private Vector2 KeyBoxTextPosition => new Vector2(KeyBoxPosition.X + KeyBox.Width / 2, KeyBoxPosition.Y + KeyBox.Height / 2);
+    private Vector2 ThrottlePosition => new Vector2(Position.X + CarTexture.Width + 21, Position.Y);
+    private Vector2 ThrottleTextPosition => new Vector2(ThrottlePosition.X + ThrottleTexture.Width / 2 + 16, ThrottlePosition.Y + ThrottleTexture.Height / 2);
     private Vector2 Center => new Vector2(Position.X + CarTexture.Width / 2, Position.Y + CarTexture.Height / 2);
     private float WheelRotation { get; set; }
     private int CarYOscillation { get; set; }
@@ -87,13 +87,15 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
     private bool IsExploded { get; set; }
 
+    private bool IsStopped { get; set; }
+
     public void LoadContent()
     {
         CarTexture = _contentManagerService.LoadTexture2D("car.pixel");
         WheelWellsTexture = _contentManagerService.LoadTexture2D("wheelwell.pixel");
         LeftWheel = _contentManagerService.LoadTexture2D("tire.pixel");
         RightWheel = _contentManagerService.LoadTexture2D("tire.pixel");
-        KeyBox = _contentManagerService.LoadTexture2D("keybox");
+        ThrottleTexture = _contentManagerService.LoadTexture2D("throttle");
         SpriteFont = _contentManagerService.LoadSpriteFont("Normal");
     }
 
@@ -128,21 +130,41 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             Speed = (float)Random.Shared.Next(5,7) * 0.001f;
         }
 
-        if (CurrentState == State.Readying)
+        if (CurrentState is State.Readying or State.Racing)
         {
-            IsReadyToRace = !Keyboard.GetState().IsKeyUp(Key);
+            var keyReleased = Keyboard.GetState().IsKeyUp(Key);
+            if (CurrentState == State.Readying)
+            {
+                IsReadyToRace = !keyReleased;
+            }
+            else if (CurrentState == State.Racing && keyReleased)
+            {
+                IsStopped = true;
+            }
         }
 
-        Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out bool reachedTarget);
+        bool reachedTarget = false;
+        if (!IsStopped)
+        {
+            Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out reachedTarget);
+        }
+        else
+        {
+            Position = new Vector2(Position.X - _raceService.GetRailSpeed(), Position.Y);
+        }
+
         if (reachedTarget && CurrentState == State.New)
         {
             CurrentState = State.Readying;
-            Explode();
         }
         else
         {
             float s1 = Vector2.Distance(Position, TargetPosition) / 750;
-            if (CurrentState == State.Racing)
+            if (IsStopped)
+            {
+                WheelRotation = 0;
+            }
+            else if (CurrentState == State.Racing)
             {
                 float s2 = _raceService.GetRailSpeed();
                 WheelRotation += Math.Max(s1, s2);
@@ -213,8 +235,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         {
             if (CurrentState == State.Readying && !IsReadyToRace)
             {
-                _drawService.Draw(spriteBatch, KeyBox, KeyBoxPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, KeyBoxTextPosition);
+                _drawService.Draw(spriteBatch, ThrottleTexture, ThrottlePosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition);
             }
             _drawService.Draw(spriteBatch, CarTexture, CarPosition);
             _drawService.Draw(spriteBatch, LeftWheel, LeftWheelPosition, WheelRotation);

@@ -66,7 +66,12 @@ public class RaceScene : IGameScene
 
     public void Initalize()
     {
-
+        var c1 = _gameObjectFactory.Create<Crowd>();
+        c1.Spawn(0);
+        var c2 = _gameObjectFactory.Create<Crowd>();
+        c2.Spawn(1);
+        var c3 = _gameObjectFactory.Create<Crowd>();
+        c3.Spawn(2);
     }
 
     private bool IsReadyToRace { get; set; }

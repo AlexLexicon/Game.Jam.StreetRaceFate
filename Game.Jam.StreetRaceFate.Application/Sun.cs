@@ -24,7 +24,7 @@ public class Sun : IGameLoadable, ISpriteBatchDrawable<BackgroundSpriteBatch>
     {
         RoadTexture = _contentManagerService.LoadTexture2D("sun.small");
 
-        Position = new Vector2(_viewportService.GetViewportWidth() / 2 - (RoadTexture.Width / 2), 75);
+        Position = new Vector2(_viewportService.GetViewportWidth() / 2 - (RoadTexture.Width / 2), 85);
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
