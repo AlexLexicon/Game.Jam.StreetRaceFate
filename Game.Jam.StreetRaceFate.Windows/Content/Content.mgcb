@@ -25,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:background.small.png
 
+#begin booing.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:booing.wav
+
+#begin camera.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:camera.wav
+
 #begin car.black.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -451,6 +463,18 @@
 /processorParam:TextureFormat=Color
 /build:city.far.small.png
 
+#begin city.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:city.wav
+
+#begin clapping.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:clapping.wav
+
 #begin crowd.back.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -474,6 +498,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:crowd.front.png
+
+#begin crowd.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:crowd.wav
 
 #begin death.big.png
 /importer:TextureImporter
@@ -522,6 +552,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:explosion.edgeless.png
+
+#begin explosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:explosion.wav
 
 #begin keybox.png
 /importer:TextureImporter
@@ -573,6 +609,42 @@
 /processorParam:TextureFormat=Compressed
 /build:medium.spritefont
 
+#begin news.cool.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:news.cool.png
+
+#begin news.epic.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:news.epic.png
+
+#begin news.lame.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:news.lame.png
+
 #begin Normal.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -598,6 +670,18 @@
 /processorParam:TextureFormat=Color
 /build:rail.better.png
 
+#begin rev.engine.1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:rev.engine.1.wav
+
+#begin rev.engine.2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:rev.engine.2.wav
+
 #begin road.better.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -610,6 +694,54 @@
 /processorParam:TextureFormat=Color
 /build:road.better.png
 
+#begin rumble.engine.1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:rumble.engine.1.wav
+
+#begin rumble.engine.2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:rumble.engine.2.wav
+
+#begin siren.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:siren.wav
+
+#begin start.engine.1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:start.engine.1.wav
+
+#begin start.engine.2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:start.engine.2.wav
+
+#begin start.engine.3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:start.engine.3.wav
+
+#begin start.engine.4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:start.engine.4.wav
+
+#begin start.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:start.wav
+
 #begin sun.small.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -621,6 +753,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sun.small.png
+
+#begin synth.2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:synth.2.wav
+
+#begin synth.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:synth.wav
 
 #begin throttle.big.png
 /importer:TextureImporter

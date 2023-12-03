@@ -2,6 +2,7 @@
 using Game.Jam.StreetRaceFate.Engine;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Net.NetworkInformation;
@@ -52,8 +53,11 @@ public class Crowd : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgro
 
     private int Index { get; set; }
 
-    public void Spawn(int index)
+    private bool IsStart { get; set; }
+
+    public void Spawn(int index, bool isStart)
     {
+        IsStart = isStart;
         Index = index;
 
         MinOscBack = Random.Shared.Next(-2, 0);
@@ -67,11 +71,21 @@ public class Crowd : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgro
         FrontTexture = _contentManagerService.LoadTexture2D("crowd.front");
         BackTexture = _contentManagerService.LoadTexture2D("crowd.back");
 
-        Position = new Vector2(Index * FrontTexture.Width, 218);
+        if (IsStart)
+        {
+            Position = new Vector2(Index * FrontTexture.Width, 218);
+        }
+        else
+        {
+            var w = _viewportService.GetViewportWidth();
+            Position = new Vector2((Index * FrontTexture.Width) + (w * 10) + (w / 3), 218);
+        }
     }
+
 
     public void Update(GameTime gameTime)
     {
+
         _delayService.Delay(gameTime, 0.15f, () =>
         {
             _oscillateService.Oscillate(MinOscBack, MaxOscBack, o =>

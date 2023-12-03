@@ -3,9 +3,12 @@ using Game.Jam.StreetRaceFate.Engine;
 using Game.Jam.StreetRaceFate.Engine.Factories;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
+using System.Reflection.Metadata;
 
 namespace Game.Jam.StreetRaceFate.Application;
 public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<CarsSpriteBatch>
@@ -81,6 +84,9 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Texture2D DeathTrophyTexture { get; set; }
     private SpriteFont SpriteFont { get; set; }
 
+    private SoundEffect EngineSound { get; set; }
+    private SoundEffect RaceSound { get; set; }
+
     private float Speed { get; set; }
     public Vector2 Position { get; private set; }
     private Vector2 TargetPosition { get; set; }
@@ -155,6 +161,39 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         Body.Load(_contentManagerService);
 
+        string effect = Random.Shared.Next(0, 4) switch
+        {
+            //0 => "start.engine.1",
+            1 => "start.engine.2",
+            2 => "start.engine.3",
+            _ => "start.engine.4",
+            //_ => "start.engine.4",
+        };
+
+        var engineStart = _contentManagerService.LoadSoundEffect(effect);
+        engineStart.CreateInstance();
+        engineStart.Play();
+
+        string engine = Random.Shared.Next(0, 2) switch
+        {
+            0 => "rumble.engine.1",
+            _ => "rumble.engine.2",
+        };
+
+        EngineSound = _contentManagerService.LoadSoundEffect(engine);
+        var x = EngineSound.CreateInstance();
+        x.Volume = 0.25f;
+        x.IsLooped = true;
+        x.Play();
+
+        string raceEngine = Random.Shared.Next(0, 2) switch
+        {
+            0 => "rev.engine.1",
+            _ => "rev.engine.2",
+        };
+
+        RaceSound = _contentManagerService.LoadSoundEffect(raceEngine);
+
         MoveToStart();
 
         IsVisible = true;
@@ -162,6 +201,13 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         MinXOsc = Random.Shared.Next(-16, 0);
         MaxXOsc = Random.Shared.Next(0, 16);
+    }
+
+    public void Rev()
+    {
+        var x = RaceSound.CreateInstance();
+        x.Volume = 0.25f;
+        x.Play();
     }
 
     private void MoveToStart()
@@ -184,6 +230,10 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
                 if (Position.X < 0)
                 {
                     MoveToStart();
+                    if (IsWinner)
+                    {
+                        TargetPosition = new Vector2(TargetPosition.X + 256, TargetPosition.Y);
+                    }
                 }
             }
         }
@@ -219,6 +269,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             else if (CurrentState == State.Racing && keyReleased)
             {
                 IsStopped = true;
+                TargetPosition = Position;
             }
         }
 
@@ -288,9 +339,29 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         }
     }
 
+    private static bool PlayedExplosion { get; set; }
+    private void Siren()
+    {
+        var a = _contentManagerService.LoadSoundEffect("siren");
+        var x = a.CreateInstance();
+        x.Volume = 0.25f;
+        x.Play();
+    }
     public void Explode()
     {
         IsExploded = true;
+
+        if (!PlayedExplosion)
+        {
+            PlayedExplosion = true;
+            var t = _contentManagerService.LoadSoundEffect("explosion");
+            var x = t.CreateInstance();
+            x.Volume = 0.5f;
+            //x.IsLooped = true;
+            x.Play();
+            Siren();
+        }
+
         var r = Random.Shared;
         int total = r.Next(6, 15);
         for (int count = 0; count < total; count++)

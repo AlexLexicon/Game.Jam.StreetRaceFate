@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 
@@ -9,6 +10,7 @@ public interface IContentManagerService
     Texture2D LoadTexture2D(string assetName);
     SpriteFont LoadSpriteFont(string assetName);
     Song LoadSong(string song);
+    SoundEffect LoadSoundEffect(string assetName);
 }
 public class ContentManagerService : IContentManagerService
 {
@@ -37,5 +39,10 @@ public class ContentManagerService : IContentManagerService
     public Song LoadSong(string assetName)
     {
         return _contentManager.Load<Song>(assetName);
+    }
+
+    public SoundEffect LoadSoundEffect(string assetName)
+    {
+        return _contentManager.Load<SoundEffect>(assetName);
     }
 }

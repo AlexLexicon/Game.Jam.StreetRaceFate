@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Game.Jam.StreetRaceFate.Application.Scenes;
-public class RaceScene : IGameScene
+public class RaceScene : IGameScene, IEndDraw
 {
     private readonly IGameObjectFactory _gameObjectFactory;
     private readonly IGraphicsService _graphicsService;
@@ -26,6 +26,8 @@ public class RaceScene : IGameScene
     private readonly TreesShadows _treesShadows;
     private readonly Lights _lights;
     private readonly IViewportService _viewportService;
+    private readonly IContentManagerService _contentManagerService;
+    private readonly News _news;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
@@ -43,7 +45,9 @@ public class RaceScene : IGameScene
         Trees trees,
         TreesShadows treesShadows,
         Lights lights,
-        IViewportService viewportService)
+        IViewportService viewportService,
+        IContentManagerService contentManagerService,
+        News news)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -63,18 +67,56 @@ public class RaceScene : IGameScene
         _treesShadows = treesShadows;
         _lights = lights;
         _viewportService = viewportService;
+        _contentManagerService = contentManagerService;
+        _news = news;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
 
     public void Initalize()
     {
-        var c1 = _gameObjectFactory.Create<Crowd>();
-        c1.Spawn(0);
-        var c2 = _gameObjectFactory.Create<Crowd>();
-        c2.Spawn(1);
-        var c3 = _gameObjectFactory.Create<Crowd>();
-        c3.Spawn(2);
+        for (int i = 0; i < 2; i++)
+        {
+            var c1 = _gameObjectFactory.Create<Crowd>();
+            c1.Spawn(0, i == 0);
+            var c2 = _gameObjectFactory.Create<Crowd>();
+            c2.Spawn(1, i == 0);
+            var c3 = _gameObjectFactory.Create<Crowd>();
+            c3.Spawn(2, i == 0);
+        }
+    }
+
+    private void Boo()
+    {
+        var a = _contentManagerService.LoadSoundEffect("booing");
+        var x = a.CreateInstance();
+        x.Volume = 1f;
+        x.Play();
+    }
+
+    private void Clap()
+    {
+        var a = _contentManagerService.LoadSoundEffect("clapping");
+        var x = a.CreateInstance();
+        x.Volume = 1f;
+        x.Play();
+    }
+
+    private void Camera()
+    {
+        IsFlash = true;
+        var a = _contentManagerService.LoadSoundEffect("camera");
+        var x = a.CreateInstance();
+        x.Volume = 1f;
+        x.Play();
+    }
+
+    private void Starting()
+    {
+        //var a = _contentManagerService.LoadSoundEffect("start");
+        //var x = a.CreateInstance();
+        //x.Volume = 1f;
+        //x.Play();
     }
 
     private bool IsReadyToRace { get; set; }
@@ -85,6 +127,14 @@ public class RaceScene : IGameScene
 
     public void Update(GameTime gameTime)
     {
+        if (IsFlash)
+        {
+            _delayService.Delay(gameTime, 0.01f, () =>
+            {
+                IsFlash = false;
+            });
+        }
+
         _raceText.IsVisible = IsReadyToRace;
         if (IsReadyToRace)
         {
@@ -133,10 +183,22 @@ public class RaceScene : IGameScene
             if (explodedCars.Count is 1)
             {
                 explodedCars.First().IsWinner = true;
+                Clap();
+                _news.IsEpic = true;
             }
             else if (winningCar is not null && explodedCars.Count is > 0)
             {
                 winningCar.IsWinner = true;
+                _news.IsCool = true;
+            }
+            else
+            {
+                if (explodedCars.Count is <= 0)
+                {
+                    Boo();
+                    _sky.PlayChill();
+                    _news.IsLame = true;
+                }
             }
 
             WinnerFound = true;
@@ -155,8 +217,13 @@ public class RaceScene : IGameScene
                     bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
                     if (isReadyToRace && !IsReadyToRace)
                     {
+                        foreach (var c in KeyToCar.Values)
+                        {
+                            c.Rev();
+                        }
                         IsReadyToRace = true;
                         ReadyCountdown = 3;
+                        Starting();
                     }
                     else if (!isReadyToRace && IsReadyToRace)
                     {
@@ -196,6 +263,8 @@ public class RaceScene : IGameScene
                 _delayService.Delay(gameTime, 20.2f, () =>
                 {
                     _raceService.StopRace();
+                    _sky.PlayCrowd();
+                    Camera();
                 });
             }
         }
@@ -245,5 +314,15 @@ public class RaceScene : IGameScene
     public void Draw(GameTime gameTime)
     {
         _graphicsService.Clear(Bg);
+    }
+
+    private bool IsFlash { get; set; }
+
+    public void EndDraw(GameTime gameTime)
+    {
+        if (IsFlash)
+        {
+            _graphicsService.Clear(Color.White);
+        }
     }
 }

@@ -92,12 +92,20 @@ public static class ServiceCollectionExtensions
                 options.SetDrawPriority(3);
             });
         });
+        services.AddGameObject<News>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.AddToSpriteBatch<NewsSpriteBatch>(options =>
+            {
+                options.SetDrawPriority(4);
+            });
+        });
         services.AddGameObject<RaceText>(options =>
         {
             options.Lifetime = ServiceLifetime.Singleton;
             options.AddToSpriteBatch<RaceTextSpriteBatch>(options =>
             {
-                options.SetDrawPriority(3);
+                options.SetDrawPriority(5);
             });
         });
     }

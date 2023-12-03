@@ -113,8 +113,13 @@ public class GameOrchestrer : Microsoft.Xna.Framework.Game, IGameOrchestrer
     protected override void Draw(GameTime gameTime)
     {
         var scenes = _weakRefrenceManager.Get<IGameScene>();
+        var endds = new List<IEndDraw>();
         foreach (var scene in scenes)
         {
+            if (scene is IEndDraw endd)
+            {
+                endds.Add(endd);
+            }
             scene.Draw(gameTime);
         }
 
@@ -145,6 +150,11 @@ public class GameOrchestrer : Microsoft.Xna.Framework.Game, IGameOrchestrer
             {
                 gameDrawable.Draw(gameTime);
             }
+        }
+
+        foreach (var endd in endds)
+        {
+            endd.EndDraw(gameTime);
         }
 
         base.Draw(gameTime);
