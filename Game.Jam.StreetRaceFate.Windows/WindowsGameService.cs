@@ -36,6 +36,8 @@ public class WindowsGameService : IWindowsGameService
     {
         _contentManagerService.SetRootDirectory("Content");
         _gameWindowService.SetAllowUserResizing(true);
+        _graphicsDeviceManagerService.SetResolution(2430, 810);
+        //_graphicsDeviceManagerService.SetFullscreen(true);
         _gameService.SetIsMouseVisible(true);
     }
 

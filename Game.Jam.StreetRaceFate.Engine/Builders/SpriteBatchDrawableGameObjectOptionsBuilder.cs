@@ -1,4 +1,5 @@
 ﻿using Game.Jam.StreetRaceFate.Engine.Extensions;
+using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -10,6 +11,16 @@ public class SpriteBatchDrawableGameObjectOptionsBuilder<TGameObject> : GameObje
     {
     }
 
+    public void SetSbDrawPrioirty(int priority)
+    {
+        Services.TryAddSingleton<ISpriteBatchDrawablePriorityProvider<TGameObject>>(sp =>
+        {
+            return new SpriteBatchDrawablePriorityProvider<TGameObject>
+            {
+                Priority = priority,
+            };
+        });
+    }
     public void AddToSpriteBatch<TSpriteBatch>(Action<DrawableGameObjectOptionsBuilder<TSpriteBatch>>? configure = null) where TSpriteBatch : ISpriteBatch
     {
         var builder = new DrawableGameObjectOptionsBuilder<TSpriteBatch>(Services);

@@ -14,6 +14,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private readonly IDelayService _delayService;
     private readonly IOscillateService _oscillateService;
     private readonly IKeysService _keysService;
+    private readonly IRaceService _raceService;
 
     public Car(
         IContentManagerService contentManagerService,
@@ -21,7 +22,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         IDrawService drawService,
         IDelayService delayService,
         IOscillateService oscillateService,
-        IKeysService keysService)
+        IKeysService keysService,
+        IRaceService raceService)
     {
         _contentManagerService = contentManagerService;
         _movementService = movementService;
@@ -31,6 +33,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         Speed = 0.25f;
         _keysService = keysService;
+        _raceService = raceService;
     }
 
     public int RowIndex { get; set; }
@@ -98,9 +101,14 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
     public void Update(GameTime gameTime)
     {
+        if (CurrentState != State.Racing && _raceService.IsRaceStarted())
+        {
+            CurrentState = State.Racing;
+        }
+
         if (CurrentState == State.Readying)
         {
-            IsReadyToRace = Keyboard.GetState().IsKeyUp(Key);
+            IsReadyToRace = !Keyboard.GetState().IsKeyUp(Key);
         }
 
         Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out bool reachedTarget);
@@ -126,7 +134,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     {
         if (IsVisible)
         {
-            if (IsReadyToRace)
+            if (CurrentState == State.Readying && !IsReadyToRace)
             {
                 _drawService.Draw(spriteBatch, KeyBox, KeyBoxPosition);
                 _drawService.Draw(spriteBatch, SpriteFont, KeyString, KeyBoxTextPosition);

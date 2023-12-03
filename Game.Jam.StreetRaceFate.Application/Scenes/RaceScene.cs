@@ -15,13 +15,27 @@ public class RaceScene : IGameScene
     private readonly IKeysService _keysService;
     private readonly IDelayService _delayService;
     private readonly RaceText _raceText;
+    private readonly Sky _sky;
+    private readonly Sun _sun;
+    private readonly CityFar _cityFar;
+    private readonly CityClose _cityClose;
+    private readonly Road _road;
+    private readonly Rail _rail;
+    private readonly IRaceService _raceService;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
         IGraphicsService graphicsService,
         IKeysService keysService,
         IDelayService delayService,
-        RaceText raceText)
+        RaceText raceText,
+        Road road,
+        Sky sky,
+        Sun sun,
+        CityFar cityFar,
+        CityClose cityClose,
+        Rail rail,
+        IRaceService raceService)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -30,6 +44,13 @@ public class RaceScene : IGameScene
         _keysService = keysService;
         _delayService = delayService;
         _raceText = raceText;
+        _road = road;
+        _sky = sky;
+        _sun = sun;
+        _cityFar = cityFar;
+        _cityClose = cityClose;
+        _rail = rail;
+        _raceService = raceService;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
@@ -41,26 +62,33 @@ public class RaceScene : IGameScene
 
     private bool IsReadyToRace { get; set; }
     private int ReadyCountdown { get; set; }
-    private bool RaceStarted { get; set; }
 
     public void Update(GameTime gameTime)
     {
-        if (!RaceStarted)
+        _raceText.IsVisible = IsReadyToRace;
+        _raceText.Text = ReadyCountdown.ToString();
+
+        if (!_raceService.IsRaceStarted())
         {
             KeyboardState state = Keyboard.GetState();
 
-            bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
-            if (isReadyToRace && !IsReadyToRace)
+            int count = KeyToCar.Count;
+
+            if (count is > 0)
             {
-                IsReadyToRace = true;
-                ReadyCountdown = 3;
-            }
-            else if (!isReadyToRace && IsReadyToRace)
-            {
-                IsReadyToRace = false;
+                bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
+                if (isReadyToRace && !IsReadyToRace)
+                {
+                    IsReadyToRace = true;
+                    ReadyCountdown = 3;
+                }
+                else if (!isReadyToRace && IsReadyToRace)
+                {
+                    IsReadyToRace = false;
+                }
             }
 
-            if (KeyToCar.Count is < ViewService.MAX_NUM_OF_PLAYERS)
+            if (count is < ViewService.MAX_NUM_OF_PLAYERS)
             {
                 foreach (var key in _keysService.GetValidKeys())
                 {
@@ -68,15 +96,18 @@ public class RaceScene : IGameScene
                 }
             }
 
-            _delayService.Delay(gameTime, 1.25f, () =>
+            if (IsReadyToRace)
             {
-                ReadyCountdown--;
-                if (ReadyCountdown is <= 0)
+                _delayService.Delay(gameTime, 1.25f, () =>
                 {
-                    IsReadyToRace = false;
-                    RaceStarted = true;
-                }
-            });
+                    ReadyCountdown--;
+                    if (ReadyCountdown is <= 0)
+                    {
+                        IsReadyToRace = false;
+                        _raceService.StartRace();
+                    }
+                });
+            }
         }
     }
 
@@ -110,7 +141,7 @@ public class RaceScene : IGameScene
                 10 => 10,
                 _ => count,
             };
-            row++;
+            row += 5;
             car.RowIndex = row;
             car.Key = key;
             car.Spawn();

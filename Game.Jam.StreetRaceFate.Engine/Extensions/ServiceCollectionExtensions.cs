@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         {
             return sp.ActivateGameInstance<OscillateService>();
         });
+        services.AddSingleton<ISpriteBatchDrawablePriorityService, SpriteBatchDrawablePriorityService>();
         services.AddSingleton<IViewportService, ViewportService>();
         services.AddSingleton<IWeakRefrenceManager, WeakRefrenceManager>();
 
