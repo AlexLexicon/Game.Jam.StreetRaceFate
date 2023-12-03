@@ -51,8 +51,9 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
 
         MediumSpriteFont = _contentManagerService.LoadSpriteFont("large");
         SmallSpriteFont = _contentManagerService.LoadSpriteFont("normal");
-        Background = _graphicsService.CreateTexture(1, 1);
-        Background.SetData(new[] { Color.Black });
+        Background = _contentManagerService.LoadTexture2D("splashscreen");
+        //Background = _graphicsService.CreateTexture(1, 1);
+        //Background.SetData(new[] { Color.Black });
 
         var titleSize = MediumSpriteFont.MeasureString(TitleText);
         var cSize = SmallSpriteFont.MeasureString(CreditsText);
@@ -63,7 +64,13 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(Background, new Rectangle(0, 0, _viewportService.GetViewportWidth(), _viewportService.GetViewportHeight()), new Color(Color.Black, Opacity));
+        var u1 = Color.White;
+        if (Opacity < 1)
+        {
+            u1 = Color.Black;
+        }
+        //spriteBatch.Draw(Background, new Rectangle(0, 0, _viewportService.GetViewportWidth(), _viewportService.GetViewportHeight()), new Color(Color.Black, Opacity));
+        spriteBatch.Draw(Background, Vector2.Zero, new Color(u1, Opacity));
         if (TitleText is not null)
         {
             var p = TitlePosition;
@@ -121,6 +128,16 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
             TargetOpacity = 0;
         }
 
-        Opacity = Vector2.Lerp(new Vector2(Opacity), new Vector2(TargetOpacity), 0.05f).X;
+        var ov = new Vector2(Opacity);
+        var tv = new Vector2(TargetOpacity);
+
+        if (Vector2.Distance(ov, tv) > 0.1f)
+        {
+            Opacity = Vector2.Lerp(ov, tv, 0.05f).X;
+        }
+        else
+        {
+            Opacity = TargetOpacity;
+        }
     }
 }
