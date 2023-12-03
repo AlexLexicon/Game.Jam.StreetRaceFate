@@ -3,9 +3,10 @@ using Game.Jam.StreetRaceFate.Engine;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Game.Jam.StreetRaceFate.Application;
-public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
+public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>, IGameUpdatable
 {
     private readonly IDrawService _drawService;
     private readonly IContentManagerService _contentManagerService;
@@ -33,6 +34,7 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
     private Texture2D DeadlyTexture { get; set; }
 
     private Texture2D ReporterTexture { get; set; }
+    private SpriteFont ReporterFont { get; set; }
 
     private Vector2 Position { get; set; }
 
@@ -41,13 +43,70 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
     public bool IsEpic { get; set; }
     public bool IsDeadly { get; set; }
 
+    private string? TextLine1 { get; set; }
+    private string? TextLine2 { get; set; }
+
+    private void Epic1()
+    {
+        TextLine1 = "A qoute from a fan who was at the epic street race tonight:";
+        TextLine2 = "'That guy was a legend! If I knew their name I'd never forget it!'";
+    }
+
+    private int Lame1()
+    {
+        TextLine1 = "An anticlimactic street race was held tonight.";
+        TextLine2 = "Fans say it sucked because no one died";
+
+        return 0;
+    }
+    private int Lame2()
+    {
+        TextLine1 = "Street race deemed boring because I quote:";
+        TextLine2 = "'No one died.'";
+
+        return 1;
+    }
+    private int Lame3()
+    {
+        TextLine1 = "Casket company sponsor of street race goes bankrupt";
+        TextLine2 = "after race ends in all participants living";
+
+        return 2;
+    }
+    private int Lame4()
+    {
+        TextLine1 = "'Whats the point of a street race if no one dies?'";
+        TextLine2 = "asks man we intervied after disappointing street race.";
+
+        return 3;
+    }
+
+    private void GenerateText()
+    {
+        if (IsLame)
+        {
+            _ = Random.Shared.Next(0, 5) switch
+            {
+                0 => Lame1(),
+                1 => Lame2(),
+                2 => Lame3(),
+                _ => Lame4(),
+            };
+        }
+        else if (IsEpic)
+        {
+            Epic1();
+        }
+    }
+
     public void LoadContent()
     {
         CoolTexture = _contentManagerService.LoadTexture2D("news.cool");
         LameTexture = _contentManagerService.LoadTexture2D("news.lame");
         EpicTexture = _contentManagerService.LoadTexture2D("news.epic");
         DeadlyTexture = _contentManagerService.LoadTexture2D("news.deadly");
-        ReporterTexture = _contentManagerService.LoadTexture2D("reporter");
+        ReporterTexture = _contentManagerService.LoadTexture2D("reporter.big");
+        ReporterFont = _contentManagerService.LoadSpriteFont("medium");
 
         var w = _viewportService.GetViewportWidth();
         var h = _viewportService.GetViewportHeight();
@@ -56,9 +115,11 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        if (IsCool || IsLame || IsEpic || IsDeadly)
+        if (TextLine2 is not null)
         {
-            //_drawService.Draw(spriteBatch, ReporterTexture, Vector2.Zero);
+            _drawService.Draw(spriteBatch, ReporterTexture, Vector2.Zero);
+            spriteBatch.DrawString(ReporterFont, TextLine1, new Vector2(208, 64), Color.White);
+            spriteBatch.DrawString(ReporterFont, TextLine2, new Vector2(208, 120), Color.White);
         }
         if (IsCool)
         {
@@ -75,6 +136,14 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>
         else if (IsDeadly)
         {
             _drawService.Draw(spriteBatch, DeadlyTexture, Position, scale: 2.5f);
+        }
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        if (_raceService.IsRaceOver() && TextLine1 is null)
+        {
+            GenerateText();
         }
     }
 }
