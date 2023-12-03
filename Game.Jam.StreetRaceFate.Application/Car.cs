@@ -77,10 +77,11 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     public Texture2D ThrottleTexture { get; set; }
     private Texture2D TrophyTexture { get; set; }
     private Texture2D DeathTexture { get; set; }
+    private Texture2D LoserTexture { get; set; }
     private SpriteFont SpriteFont { get; set; }
 
     private float Speed { get; set; }
-    private Vector2 Position { get; set; }
+    public Vector2 Position { get; private set; }
     private Vector2 TargetPosition { get; set; }
 
     private Vector2 CarPosition => new Vector2(Position.X + CarXOscillation, Position.Y + CarYOscillation);
@@ -99,18 +100,21 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Vector2 TextTrophyPosition => new Vector2(TrophyPosition.X + TrophyTexture.Width / 2 + 16, TrophyPosition.Y + TrophyTexture.Height / 2);
     private Vector2 DeathPosition => new Vector2(Position.X + Body.Width + 21, Position.Y);
     private Vector2 TextDeathPosition => new Vector2(DeathPosition.X + DeathTexture.Width / 2 + 16, DeathPosition.Y + DeathTexture.Height / 2);
+    private Vector2 LoserPosition => new Vector2(Position.X + Body.Width + 21, Position.Y);
+    private Vector2 TextLoserPosition => new Vector2(LoserPosition.X + LoserTexture.Width / 2 + 16, LoserPosition.Y + LoserTexture.Height / 2);
 
     private int MinXOsc { get; set; }
     private int MaxXOsc { get; set; }
 
     private bool StopOsc { get; set; }
 
-    private bool IsExploded { get; set; }
+    public bool IsExploded { get; private set; }
 
-    private bool IsStopped { get; set; }
+    public bool IsStopped { get; private set; }
 
-    private bool IsDeath { get; set; }
-    private bool IsWinner { get; set; }
+    public bool IsDeath { get; set; }
+    public bool IsWinner { get; set; }
+    public bool IsLoser { get; set; }
 
     public void LoadContent()
     {
@@ -118,6 +122,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         SpriteFont = _contentManagerService.LoadSpriteFont("Normal");
         TrophyTexture = _contentManagerService.LoadTexture2D("trophy.big");
         DeathTexture = _contentManagerService.LoadTexture2D("death.big");
+        LoserTexture = _contentManagerService.LoadTexture2D("lose.big");
     }
 
     public void Initalize()
@@ -146,11 +151,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         Body.Load(_contentManagerService);
 
-        float y = RowIndex * (Body.Height + ViewService.CAR_PADDING);
-
-        Position = new Vector2(-Body.Width, y);
-        TargetPosition = new Vector2(42, y);
-        Speed = 0.025f;
+        MoveToStart();
 
         IsVisible = true;
         IsReadyToRace = false;
@@ -159,8 +160,27 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         MaxXOsc = Random.Shared.Next(0, 16);
     }
 
+    private void MoveToStart()
+    {
+        float y = RowIndex * (Body.Height + ViewService.CAR_PADDING);
+        Position = new Vector2(-Body.Width, y);
+        TargetPosition = new Vector2(42, y);
+        Speed = 0.025f;
+    }
+
+    private bool RaceFinishReset { get; set; }
+
     public void Update(GameTime gameTime)
     {
+        if (_raceService.IsRaceOver())
+        {
+            if ((IsWinner || IsLoser) && !RaceFinishReset)
+            {
+                RaceFinishReset = true;
+                MoveToStart();
+            }
+        }
+
         if (CurrentState != State.Racing && _raceService.IsRacing())
         {
             CurrentState = State.Racing;
@@ -176,13 +196,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
                 if (!IsExploded)
                 {
                     Explode();
-                    IsDeath = true;
                     TargetPosition = new Vector2(Position.X + 25, Position.Y);
                 }
-            }
-            else
-            {
-                IsWinner = true;
             }
         }
 
@@ -201,7 +216,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         }
 
         bool reachedTarget = false;
-        if (!IsStopped)
+        if (_raceService.IsRaceOver() || !IsStopped)
         {
             Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out reachedTarget);
         }
@@ -291,17 +306,22 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             if (CurrentState == State.Readying && !IsReadyToRace)
             {
                 _drawService.Draw(spriteBatch, ThrottleTexture, ThrottlePosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition, Color.White);
             }
             if (IsWinner)
             {
                 _drawService.Draw(spriteBatch, TrophyTexture, TrophyPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextTrophyPosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextTrophyPosition, Color.White);
             }
             else if (IsDeath)
             {
                 _drawService.Draw(spriteBatch, DeathTexture, DeathPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathPosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathPosition, Color.White);
+            }
+            else if (IsLoser)
+            {
+                _drawService.Draw(spriteBatch, LoserTexture, LoserPosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextLoserPosition, Color.White);
             }
             Body.Draw(_drawService, spriteBatch, CarPosition, LeftWheelPosition, RightWheelPosition, WheelRotation);
         }

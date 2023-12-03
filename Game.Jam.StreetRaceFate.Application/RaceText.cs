@@ -8,24 +8,30 @@ public class RaceText : IGameInitalizable, IGameLoadable, IGameUpdatable, ISprit
 {
     private readonly IContentManagerService _contentManagerService;
     private readonly IViewportService _viewportService;
+    private readonly IDrawService _drawService;
 
     public RaceText(
-        IContentManagerService contentManagerService, 
-        IViewportService viewportService)
+        IContentManagerService contentManagerService,
+        IViewportService viewportService,
+        IDrawService drawService)
     {
         _contentManagerService = contentManagerService;
         _viewportService = viewportService;
+        _drawService = drawService;
     }
 
     public bool IsVisible { get; set; }
-    public string? Text { get; set; }
+    public string? BigText { get; set; }
+    public string? MediumText { get; set; }
 
-    private SpriteFont SpriteFont { get; set; }
+    private SpriteFont LargeSpriteFont { get; set; }
+    private SpriteFont MediumSpriteFont { get; set; }
     private Vector2 Position { get; set; }
 
     public void LoadContent()
     {
-        SpriteFont = _contentManagerService.LoadSpriteFont("Large");
+        LargeSpriteFont = _contentManagerService.LoadSpriteFont("large");
+        MediumSpriteFont = _contentManagerService.LoadSpriteFont("medium");
     }
 
     public void Initalize()
@@ -43,9 +49,26 @@ public class RaceText : IGameInitalizable, IGameLoadable, IGameUpdatable, ISprit
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        if (IsVisible && Text is not null)
+        if (IsVisible)
         {
-            spriteBatch.DrawString(SpriteFont, Text, Position, Color.White);
+            if (BigText is not null)
+            {
+                var p = Position;
+
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 6, p.Y + 6), new Color(0, 0, 0));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 4, p.Y + 4), new Color(25, 195, 230));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 2, p.Y + 2), new Color(254, 75, 179));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, p, Color.White);
+            }
+            if (MediumText is not null)
+            {
+                var p = new Vector2(Position.X, Position.Y + 28);
+
+                _drawService.Draw(spriteBatch, MediumSpriteFont, MediumText, new Vector2(p.X + 3, p.Y + 3), new Color(0, 0, 0));
+                _drawService.Draw(spriteBatch, MediumSpriteFont, MediumText, new Vector2(p.X + 2, p.Y + 2), new Color(25, 195, 230));
+                _drawService.Draw(spriteBatch, MediumSpriteFont, MediumText, new Vector2(p.X + 1, p.Y + 1), new Color(254, 75, 179));
+                _drawService.Draw(spriteBatch, MediumSpriteFont, MediumText, p, Color.White);
+            }
         }
     }
 }

@@ -25,6 +25,7 @@ public class RaceScene : IGameScene
     private readonly Trees _trees;
     private readonly TreesShadows _treesShadows;
     private readonly Lights _lights;
+    private readonly IViewportService _viewportService;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
@@ -41,7 +42,8 @@ public class RaceScene : IGameScene
         IRaceService raceService,
         Trees trees,
         TreesShadows treesShadows,
-        Lights lights)
+        Lights lights,
+        IViewportService viewportService)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -60,6 +62,7 @@ public class RaceScene : IGameScene
         _trees = trees;
         _treesShadows = treesShadows;
         _lights = lights;
+        _viewportService = viewportService;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
@@ -77,10 +80,67 @@ public class RaceScene : IGameScene
     private bool IsReadyToRace { get; set; }
     private int ReadyCountdown { get; set; }
 
+    private bool RaceStarted { get; set; }
+    private bool WinnerFound { get; set; }
+
     public void Update(GameTime gameTime)
     {
         _raceText.IsVisible = IsReadyToRace;
-        _raceText.Text = ReadyCountdown.ToString();
+        if (IsReadyToRace)
+        {
+            _raceText.MediumText = null;
+            _raceText.BigText = ReadyCountdown.ToString();
+        }
+        else
+        {
+            _raceText.BigText = null;
+        }
+
+        if (_raceService.IsRacing())
+        {
+            bool allStopped = KeyToCar.Values.All(c => c.IsStopped);
+            if (allStopped)
+            {
+                _raceService.StopRace();
+            }
+        }
+
+        if (_raceService.IsRaceOver() && RaceStarted && !WinnerFound)
+        {
+            Car? winningCar = null;
+            float winningDis = float.MaxValue;
+            var explodedCars = new List<Car>();
+            foreach (var car in KeyToCar.Values)
+            {
+                if (car.IsExploded)
+                {
+                    car.IsDeath = true;
+                    explodedCars.Add(car);
+                }
+                else if (car.IsStopped)
+                {
+                    car.IsLoser = true;
+
+                    float dis = Vector2.Distance(car.Position, new Vector2(_viewportService.GetViewportWidth(), car.Position.Y));
+                    if (dis < winningDis)
+                    {
+                        winningCar = car;
+                        winningDis = dis;
+                    }
+                }
+            }
+
+            if (explodedCars.Count is 1)
+            {
+                explodedCars.First().IsWinner = true;
+            }
+            if (winningCar is not null && explodedCars.Count is > 0)
+            {
+                winningCar.IsWinner = true;
+            }
+
+            WinnerFound = true;
+        }
 
         if (!_raceService.IsRaceOver())
         {
@@ -90,7 +150,7 @@ public class RaceScene : IGameScene
 
                 int count = KeyToCar.Count;
 
-                if (count is > 0)
+                if (count is > 2)
                 {
                     bool isReadyToRace = KeyToCar.Values.All(c => c.IsReadyToRace);
                     if (isReadyToRace && !IsReadyToRace)
@@ -102,6 +162,11 @@ public class RaceScene : IGameScene
                     {
                         IsReadyToRace = false;
                     }
+                }
+                else
+                {
+                    _raceText.MediumText = $"{3 - count} MORE PLAYER(S) MUST JOIN BEFORE RACE CAN BEGIN!";
+                    _raceText.IsVisible = true;
                 }
 
                 if (count is < ViewService.MAX_NUM_OF_PLAYERS)
@@ -121,6 +186,7 @@ public class RaceScene : IGameScene
                         {
                             IsReadyToRace = false;
                             _raceService.StartRace();
+                            RaceStarted = true;
                         }
                     });
                 }
