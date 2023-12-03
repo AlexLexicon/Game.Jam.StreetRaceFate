@@ -32,8 +32,8 @@ public class Sky : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgroun
     public void LoadContent()
     {
         RoadTexture = _contentManagerService.LoadTexture2D("background.small");
-        RaceSong = _contentManagerService.LoadSong("race.trim");
-        ChillSong = _contentManagerService.LoadSong("chill.trim");
+        RaceSong = _contentManagerService.LoadSong("race.final");
+        ChillSong = _contentManagerService.LoadSong("chill.final");
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -48,7 +48,7 @@ public class Sky : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgroun
         if (!IsStarted && racing)
         {
             MediaPlayer.IsRepeating = false;
-            //MediaPlayer.Play(RaceSong);
+            MediaPlayer.Play(RaceSong);
             IsStarted = true;
             IsChill = false;
         }
@@ -56,7 +56,7 @@ public class Sky : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Backgroun
         if (!racing && !IsChill && MediaPlayer.State is not MediaState.Playing)
         {
             MediaPlayer.IsRepeating = true;
-            //MediaPlayer.Play(ChillSong);
+            MediaPlayer.Play(ChillSong);
             IsChill = true;
             IsStarted = false;
         }

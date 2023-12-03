@@ -150,25 +150,25 @@ public class RaceScene : IGameScene
         {
             var car = _gameObjectFactory.Create<Car>();
 
-            int row = count switch
+            (int row, Car.Bodies body) = count switch
             {
-                0 => 5,
-                1 => 3,
-                2 => 7,
-                3 => 1,
-                4 => 9,
-                5 => 4,
-                6 => 6,
-                7 => 2,
-                8 => 8,
-                9 => 0,
-                10 => 10,
-                _ => count,
+                0 => (5, Car.Bodies.Orange),
+                1 => (3, Car.Bodies.Green),
+                2 => (7, Car.Bodies.Purple),
+                3 => (1, Car.Bodies.Red),
+                4 => (9, Car.Bodies.Blue),
+                5 => (4, Car.Bodies.Black),
+                6 => (6, Car.Bodies.Silver),
+                7 => (2, Car.Bodies.Spray),
+                8 => (8, Car.Bodies.White),
+                9 => (0, Car.Bodies.Gold),
+                10 => (10, Car.Bodies.Brown),
+                _ => (count, Car.Bodies.Orange),
             };
             row += 5;
             car.RowIndex = row;
             car.Key = key;
-            car.Spawn();
+            car.Spawn(body);
 
             KeyToCar.Add(key, car);
         }
