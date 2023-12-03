@@ -1,4 +1,5 @@
 ﻿using Game.Jam.StreetRaceFate.Engine.Builders;
+using Game.Jam.StreetRaceFate.Engine.Factories;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
@@ -13,71 +14,99 @@ public static class ServiceCollectionExtensions
     {
         services.AddOrchestrer<GameOrchestrer>();
 
+        services.AddSingleton<IGameObjectFactory, GameObjectFactory>();
+        services.AddSingleton<ISceneFactory, SceneFactory>();
+        services.AddSingleton<ISpriteBatchFactory, SpriteBatchFactory>();
+
         services.AddSingleton<IContentManagerService, ContentManagerService>();
-        services.AddSingleton<IDrawablePriorityService,  DrawablePriorityService>();   
+        services.AddSingleton<IDelayService, DelayService>();
+        services.AddSingleton<IDrawablePriorityService, DrawablePriorityService>();
+        services.AddSingleton<IDrawService, DrawService>();
         services.AddSingleton<IGameService, GameService>();
         services.AddSingleton<IGameWindowService, GameWindowService>();
         services.AddSingleton<IGraphicsDeviceManagerService, GraphicsDeviceManagerService>();
-        services.AddSingleton<IGraphicsDeviceProvider,  GraphicsDeviceProvider>();
+        services.AddSingleton<IGraphicsDeviceProvider, GraphicsDeviceProvider>();
         services.AddSingleton<IGraphicsService, GraphicsService>();
-        services.AddSingleton<ISpriteBatchFactory, SpriteBatchFactory>();
+        services.AddSingleton<IKeysService, KeysService>();
+        services.AddSingleton<IMovementService, MovementService>();
+        services.AddSingleton<IOscillateService>(sp =>
+        {
+            return sp.ActivateGameInstance<OscillateService>();
+        });
         services.AddSingleton<IViewportService, ViewportService>();
         services.AddSingleton<IWeakRefrenceManager, WeakRefrenceManager>();
 
-        services.AddGameObject<FramerateService>(ServiceLifetime.Singleton);
-        services.AddGameObject<FramerateSpriteBatch>(options =>
+        services.AddGameObject<FramerateService>(options =>
         {
-            options.SetDrawPriority(int.MaxValue);
+            options.AddToSpriteBatch<FramerateSpriteBatch>(options =>
+            {
+                options.SetDrawPriority(int.MaxValue);
+            });
         });
     }
 
-    public static void AddGameObject<TGameObject>(this IServiceCollection services, ServiceLifetime lifetime)
+    public static void AddScene<TGameScene>(this IServiceCollection services) where TGameScene : class, IGameScene
     {
-        AddGameObject<TGameObject>(services, options =>
+        services.AddTransient(sp =>
         {
-            options.Lifetime = lifetime;
+            var weakRefrenceManager = sp.GetRequiredService<IWeakRefrenceManager>();
+
+            var gameScene = (TGameScene)ActivatorUtilities.CreateInstance(sp, typeof(TGameScene));
+
+            weakRefrenceManager.Add<IGameScene>(gameScene);
+
+            return gameScene;
         });
     }
-    public static void AddGameObject<TGameObject>(this IServiceCollection services, Action<GameObjectOptionsBuilder<TGameObject>> configure)
+
+    public static void AddGameObject<TGameObject>(this IServiceCollection services, Action<DrawableGameObjectOptionsBuilder<TGameObject>>? configure = null, ServiceLifetime? lifetime = null) where TGameObject : IGameDrawable
     {
-        var builder = new GameObjectOptionsBuilder<TGameObject>(services);
+        var builder = new DrawableGameObjectOptionsBuilder<TGameObject>(services);
 
         configure?.Invoke(builder);
 
+        if (lifetime is not null)
+        {
+            builder.Lifetime = lifetime.Value;
+        }
+
+        AddGameObject(services, builder);
+    }
+    public static void AddGameObject<TGameObject>(this IServiceCollection services, Action<SpriteBatchDrawableGameObjectOptionsBuilder<TGameObject>>? configure = null, ServiceLifetime? lifetime = null) where TGameObject : IGameObject, ISpriteBatchDrawable
+    {
+        var builder = new SpriteBatchDrawableGameObjectOptionsBuilder<TGameObject>(services);
+
+        configure?.Invoke(builder);
+
+        if (lifetime is not null)
+        {
+            builder.Lifetime = lifetime.Value;
+        }
+
+        AddGameObject(services, builder);
+    }
+
+    private static void AddGameObject<TGameObject>(this IServiceCollection services, GameObjectOptionsBuilder<TGameObject> builder) where TGameObject : IGameObject
+    {
         Type gameObjectType = typeof(TGameObject);
         services.Add(new ServiceDescriptor(gameObjectType, (sp) =>
         {
-            object gameObject = ActivatorUtilities.CreateInstance(sp, gameObjectType);
-
             var weakRefrenceManager = sp.GetRequiredService<IWeakRefrenceManager>();
-            if (gameObject is IGameDrawable gameDrawabley)
-            {
-                weakRefrenceManager.Add(gameDrawabley);
-            }
-            if (gameObject is IGameInitalizable gameInializable)
-            {
-                weakRefrenceManager.Add(gameInializable);
-            }
-            if (gameObject is IGameLoadable gameLoadable)
-            {
-                weakRefrenceManager.Add(gameLoadable);
-            }
-            if (gameObject is IGameUpdatable gameUpdatable)
-            {
-                weakRefrenceManager.Add(gameUpdatable);
-            }
 
-            Type spriteBatchDrawableType = typeof(ISpriteBatchDrawable<>);
+            object gameObject = sp.ActivateWeakGameInstance<TGameObject>(weakRefrenceManager);
+
+            Type spriteBatchDrawableInterfaceType = typeof(ISpriteBatchDrawable<>);
             List<Type> spriteBatchDrawableGenericArgumentTypes = gameObjectType
                 .GetInterfaces()
-                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == spriteBatchDrawableType)
+                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == spriteBatchDrawableInterfaceType)
                 .Select(t => t.GetGenericArguments().First())
                 .ToList();
             if (spriteBatchDrawableGenericArgumentTypes.Count is > 0)
             {
-                foreach (Type spriteBatchDrawableGenericArgumentType in spriteBatchDrawableGenericArgumentTypes)
+                foreach (Type spriteBatchType in spriteBatchDrawableGenericArgumentTypes)
                 {
-                    Type interfaceType = spriteBatchDrawableType.MakeGenericType(spriteBatchDrawableGenericArgumentType);
+                    var x = sp.GetRequiredService(spriteBatchType);
+                    Type interfaceType = spriteBatchDrawableInterfaceType.MakeGenericType(spriteBatchType);
                     weakRefrenceManager.Add(interfaceType, gameObject);
                 }
             }
@@ -86,9 +115,17 @@ public static class ServiceCollectionExtensions
         }, builder.Lifetime));
     }
 
-    public static void AddOrchestrer<TGameOrchestrer>(this IServiceCollection services) where TGameOrchestrer : Microsoft.Xna.Framework.Game
+    public static void AddOrchestrer<TGameOrchestrer>(this IServiceCollection services) where TGameOrchestrer : Microsoft.Xna.Framework.Game, IGameOrchestrer
     {
-        services.AddSingleton<Microsoft.Xna.Framework.Game, TGameOrchestrer>();
+        services.AddSingleton<TGameOrchestrer>();
+        services.AddSingleton<IGameOrchestrer>(sp =>
+        {
+            return sp.GetRequiredService<TGameOrchestrer>();
+        });
+        services.AddSingleton<Microsoft.Xna.Framework.Game>(sp =>
+        {
+            return sp.GetRequiredService<TGameOrchestrer>();
+        });
         services.AddSingleton(sp =>
         {
             var game = sp.GetRequiredService<Microsoft.Xna.Framework.Game>();

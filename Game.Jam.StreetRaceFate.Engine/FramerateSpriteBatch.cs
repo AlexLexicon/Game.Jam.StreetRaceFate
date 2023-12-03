@@ -1,9 +1,10 @@
-﻿using Game.Jam.StreetRaceFate.Engine.Services;
+﻿using Game.Jam.StreetRaceFate.Engine.Factories;
+using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Game.Jam.StreetRaceFate.Engine;
-public class FramerateSpriteBatch : IGameLoadable, IGameDrawable
+public class FramerateSpriteBatch : ISpriteBatch
 {
     private readonly IViewportService _viewportService;
     private readonly ISpriteBatchFactory _spriteBatchFactory;

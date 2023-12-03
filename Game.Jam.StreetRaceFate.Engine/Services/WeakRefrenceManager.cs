@@ -6,7 +6,7 @@ public interface IWeakRefrenceManager
 {
     void Add<TInterface>(TInterface refrence) where TInterface : notnull;
     void Add(Type interfaceType, object refrence);
-    IEnumerable<TInterface> Get<TInterface>() where TInterface : notnull;
+    List<TInterface> Get<TInterface>() where TInterface : notnull;
 }
 public class WeakRefrenceManager : IWeakRefrenceManager
 {
@@ -39,17 +39,22 @@ public class WeakRefrenceManager : IWeakRefrenceManager
         }
     }
 
-    public IEnumerable<TInterface> Get<TInterface>() where TInterface : notnull
+    public List<TInterface> Get<TInterface>() where TInterface : notnull
     {
+        var items = new List<TInterface>();
         if (_interfaceToWeakReferences.TryGetValue(typeof(TInterface), out List<WeakReference>? weakReferences))
         {
             foreach (WeakReference weakReference in weakReferences)
             {
                 if (weakReference.IsAlive && weakReference.Target is not null)
                 {
-                    yield return (TInterface)weakReference.Target;
+                    var item = (TInterface)weakReference.Target;
+
+                    items.Add(item);
                 }
             }
         }
+
+        return items;
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace Game.Jam.StreetRaceFate.Engine;
-public interface IGameLoadable
+public interface IGameLoadable : IGameObject
 {
     void LoadContent();
 }

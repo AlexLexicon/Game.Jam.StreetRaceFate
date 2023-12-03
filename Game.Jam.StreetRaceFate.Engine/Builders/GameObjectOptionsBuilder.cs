@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Game.Jam.StreetRaceFate.Engine.Builders;
-public class GameObjectOptionsBuilder<TGameObject>
+public abstract class GameObjectOptionsBuilder<TGameObject> where TGameObject : IGameObject
 {
     public GameObjectOptionsBuilder(IServiceCollection services)
     {
         Services = services;
+        Lifetime = ServiceLifetime.Singleton;
     }
 
     public IServiceCollection Services { get; }

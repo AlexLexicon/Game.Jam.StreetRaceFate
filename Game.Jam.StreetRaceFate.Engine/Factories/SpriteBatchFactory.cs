@@ -1,9 +1,10 @@
 ﻿using Game.Jam.StreetRaceFate.Engine.Exceptions;
+using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace Game.Jam.StreetRaceFate.Engine.Services;
+namespace Game.Jam.StreetRaceFate.Engine.Factories;
 public interface ISpriteBatchFactory
 {
     SpriteBatch CreateSpriteBatch<TSpriteBatch>();
