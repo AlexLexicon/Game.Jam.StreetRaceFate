@@ -106,7 +106,7 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
     {
         if (IsVisible)
         {
-            _delayService.Delay(gameTime, 5f, () =>
+            _delayService.Delay(gameTime, 2f, () =>
             {
                 IsVisible = false;
             });
