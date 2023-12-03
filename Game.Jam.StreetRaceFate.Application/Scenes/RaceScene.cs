@@ -116,18 +116,18 @@ public class RaceScene : IGameScene, IEndDraw
 
     private void Synth()
     {
-        var a = _contentManagerService.LoadSoundEffect("synth");
-        var x = a.CreateInstance();
-        x.Volume = 1f;
-        x.Play();
+        //var a = _contentManagerService.LoadSoundEffect("synth");
+        //var x = a.CreateInstance();
+        //x.Volume = 1f;
+        //x.Play();
     }
 
     private void Synth2()
     {
-        var a = _contentManagerService.LoadSoundEffect("synth.2");
-        var x = a.CreateInstance();
-        x.Volume = 1f;
-        x.Play();
+        //var a = _contentManagerService.LoadSoundEffect("synth.2");
+        //var x = a.CreateInstance();
+        //x.Volume = 1f;
+        //x.Play();
     }
 
     private bool IsReadyToRace { get; set; }

@@ -22,6 +22,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private readonly IRaceService _raceService;
     private readonly IGraphicsDeviceManagerService _graphicsDeviceManagerService;
     private readonly IGameObjectFactory _gameObjectFactory;
+    private readonly IViewportService _viewportService;
 
     public Car(
         IContentManagerService contentManagerService,
@@ -32,7 +33,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         IKeysService keysService,
         IRaceService raceService,
         IGraphicsDeviceManagerService graphicsDeviceManagerService,
-        IGameObjectFactory gameObjectFactory)
+        IGameObjectFactory gameObjectFactory,
+        IViewportService viewportService)
     {
         _contentManagerService = contentManagerService;
         _movementService = movementService;
@@ -45,6 +47,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         _raceService = raceService;
         _graphicsDeviceManagerService = graphicsDeviceManagerService;
         _gameObjectFactory = gameObjectFactory;
+        _viewportService = viewportService;
     }
 
     public int RowIndex { get; set; }
@@ -125,6 +128,10 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     public bool IsWinner { get; set; }
     public bool IsLoser { get; set; }
 
+    private Texture2D BlockTexture { get; set; }
+
+    private Vector2 BlockPosition { get; set; }
+
     public void LoadContent()
     {
         ThrottleTexture = _contentManagerService.LoadTexture2D("throttle.big");
@@ -133,6 +140,13 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         DeathTexture = _contentManagerService.LoadTexture2D("death.big");
         LoserTexture = _contentManagerService.LoadTexture2D("lose.big");
         DeathTrophyTexture = _contentManagerService.LoadTexture2D("deathtrophy.big");
+
+        if (Id is 0)
+        {
+            BlockTexture = _contentManagerService.LoadTexture2D("block");
+            var w = _viewportService.GetViewportWidth();
+            BlockPosition = new Vector2(((w * 10) + (w / 3)) - 200, 203);
+        }
     }
 
     public void Initalize()
@@ -142,8 +156,14 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         IsVisible = false;
     }
 
+    private static int NextId { get; set; }
+    private int Id { get; set; }
+
     public void Spawn(Bodies body)
     {
+        Id = NextId;
+        NextId++;
+
         Body = body switch
         {
             Bodies.Blue => new CarBody(body, leftWheelX: 12, rightWheelX: 91, wheelY: 22),
@@ -222,6 +242,11 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
     public void Update(GameTime gameTime)
     {
+        if (Id is 0 && _raceService.IsRaceStarted())
+        {
+            BlockPosition = new Vector2(BlockPosition.X - _raceService.GetRailSpeed(), BlockPosition.Y);
+        }
+
         if (_raceService.IsRaceOver())
         {
             if ((IsWinner || IsLoser) && !RaceFinishReset)
@@ -381,32 +406,46 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     {
         if (IsVisible)
         {
+
+            Body.Draw(_drawService, spriteBatch, CarPosition, LeftWheelPosition, RightWheelPosition, WheelRotation);
+            //if (Id is 0)
+            //{
+            //    _drawService.Draw(spriteBatch, BlockTexture, BlockPosition);
+            //}
+        }
+    }
+
+    public void DrawLater(GameTime gameTime, SpriteBatch spriteBatch)
+    {
+        if (IsVisible)
+        {
+            float d = 1f;
+
             if (CurrentState == State.Readying && !IsReadyToRace)
             {
-                _drawService.Draw(spriteBatch, ThrottleTexture, ThrottlePosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition, Color.White);
+                _drawService.Draw(spriteBatch, ThrottleTexture, ThrottlePosition, layerDepth: d);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition, Color.White, layerDepth: d);
             }
             if (IsWinner && IsDeath)
             {
-                _drawService.Draw(spriteBatch, DeathTrophyTexture, DeathTrophyPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathTrophyPosition, Color.White);
+                _drawService.Draw(spriteBatch, DeathTrophyTexture, DeathTrophyPosition, layerDepth: d);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathTrophyPosition, Color.White, layerDepth: d);
             }
             else if (IsWinner)
             {
-                _drawService.Draw(spriteBatch, TrophyTexture, TrophyPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextTrophyPosition, Color.White);
+                _drawService.Draw(spriteBatch, TrophyTexture, TrophyPosition, layerDepth: d);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextTrophyPosition, Color.White, layerDepth: d);
             }
             else if (IsDeath)
             {
-                _drawService.Draw(spriteBatch, DeathTexture, DeathPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathPosition, Color.White);
+                _drawService.Draw(spriteBatch, DeathTexture, DeathPosition, layerDepth: d);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathPosition, Color.White, layerDepth: d);
             }
             else if (IsLoser)
             {
-                _drawService.Draw(spriteBatch, LoserTexture, LoserPosition);
-                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextLoserPosition, Color.White);
+                _drawService.Draw(spriteBatch, LoserTexture, LoserPosition, layerDepth: d);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextLoserPosition, Color.White, layerDepth: d);
             }
-            Body.Draw(_drawService, spriteBatch, CarPosition, LeftWheelPosition, RightWheelPosition, WheelRotation);
         }
     }
 
@@ -459,10 +498,12 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
         public void Draw(IDrawService ds, SpriteBatch spriteBatch, Vector2 carPosition, Vector2 lwPosition, Vector2 rwPosition, float wRotation)
         {
-            ds.Draw(spriteBatch, CarTexture, carPosition);
-            ds.Draw(spriteBatch, LeftWheel, lwPosition, wRotation);
-            ds.Draw(spriteBatch, RightWheel, rwPosition, wRotation);
-            ds.Draw(spriteBatch, WheelWellsTexture, carPosition);
+            float d = 1f;
+
+            ds.Draw(spriteBatch, CarTexture, carPosition, layerDepth: d);
+            ds.Draw(spriteBatch, LeftWheel, lwPosition, wRotation, layerDepth: d);
+            ds.Draw(spriteBatch, RightWheel, rwPosition, wRotation, layerDepth: d);
+            ds.Draw(spriteBatch, WheelWellsTexture, carPosition, layerDepth: d);
         }
     }
 }

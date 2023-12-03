@@ -55,9 +55,9 @@ public class RaceText : IGameInitalizable, IGameLoadable, IGameUpdatable, ISprit
             {
                 var p = Position;
 
-                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 6, p.Y + 6), new Color(0, 0, 0));
-                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 4, p.Y + 4), new Color(25, 195, 230));
-                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 2, p.Y + 2), new Color(254, 75, 179));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 9, p.Y + 9), new Color(0, 0, 0));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 6, p.Y + 6), new Color(25, 195, 230));
+                _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, new Vector2(p.X + 3, p.Y + 3), new Color(254, 75, 179));
                 _drawService.Draw(spriteBatch, LargeSpriteFont, BigText, p, Color.White);
             }
             if (MediumText is not null)

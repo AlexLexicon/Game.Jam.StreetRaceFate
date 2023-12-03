@@ -79,6 +79,7 @@ public static class ServiceCollectionExtensions
         services.AddGameObject<Car>(options =>
         {
             options.Lifetime = ServiceLifetime.Transient;
+            options.SetSbDrawPrioirty(1);
             options.AddToSpriteBatch<CarsSpriteBatch>(options =>
             {
                 options.SetDrawPriority(2);
@@ -87,15 +88,15 @@ public static class ServiceCollectionExtensions
         services.AddGameObject<Blockade>(options =>
         {
             options.Lifetime = ServiceLifetime.Singleton;
-            options.SetSbDrawPrioirty(3);
-            options.AddToSpriteBatch<BlockadeSpriteBatch>();
+            options.SetSbDrawPrioirty(2);
+            options.AddToSpriteBatch<CarsSpriteBatch>();
         });
         services.AddGameObject<Explosion>(options =>
         {
             options.Lifetime = ServiceLifetime.Transient;
             options.AddToSpriteBatch<ExplosionSpriteBatch>(options =>
             {
-                options.SetDrawPriority(4);
+                options.SetDrawPriority(3);
             });
         });
         services.AddGameObject<News>(options =>

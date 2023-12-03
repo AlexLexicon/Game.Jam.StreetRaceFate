@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace Game.Jam.StreetRaceFate.Application;
-public class Blockade : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<BlockadeSpriteBatch>
+public class Blockade : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<CarsSpriteBatch>
 {
     private readonly IDrawService _drawService;
     private readonly IContentManagerService _contentManagerService;
@@ -39,6 +39,7 @@ public class Blockade : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Bloc
 
         var w = _viewportService.GetViewportWidth();
         Position = new Vector2(((w * 10) + (w / 3)) - 200, 203);
+        //Position = new Vector2(0, 0);
     }
 
     public void Update(GameTime gameTime)
@@ -51,6 +52,7 @@ public class Blockade : IGameLoadable, IGameUpdatable, ISpriteBatchDrawable<Bloc
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        _drawService.Draw(spriteBatch, Texture, Position);
+        //spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, -100f);
+        _drawService.Draw(spriteBatch, Texture, Position, layerDepth: 1f);
     }
 }
