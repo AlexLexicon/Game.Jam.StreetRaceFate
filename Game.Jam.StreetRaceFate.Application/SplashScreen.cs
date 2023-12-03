@@ -104,7 +104,7 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
 
             //_drawService.Draw(spriteBatch, MediumSpriteFont, CreditsText, new Vector2(p.X + 3, p.Y + 3), new Color(0, 0, 0));
             //_drawService.Draw(spriteBatch, MediumSpriteFont, CreditsText, new Vector2(p.X + 2, p.Y + 2), new Color(25, 195, 230));
-            //_drawService.Draw(spriteBatch, MediumSpriteFont, CreditsText, new Vector2(p.X + 1, p.Y + 1), new Color(254, 75, 179));
+            _drawService.Draw(spriteBatch, SmallSpriteFont, CreditsText, new Vector2(p.X + 2, p.Y + 2), new Color(Color.Black, Opacity), scale: 1f);
             _drawService.Draw(spriteBatch, SmallSpriteFont, CreditsText, p, new Color(x4, Opacity));
         }
     }
