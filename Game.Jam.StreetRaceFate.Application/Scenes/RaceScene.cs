@@ -134,7 +134,7 @@ public class RaceScene : IGameScene
             {
                 explodedCars.First().IsWinner = true;
             }
-            if (winningCar is not null && explodedCars.Count is > 0)
+            else if (winningCar is not null && explodedCars.Count is > 0)
             {
                 winningCar.IsWinner = true;
             }

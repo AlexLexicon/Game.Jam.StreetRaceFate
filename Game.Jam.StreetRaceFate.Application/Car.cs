@@ -78,6 +78,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Texture2D TrophyTexture { get; set; }
     private Texture2D DeathTexture { get; set; }
     private Texture2D LoserTexture { get; set; }
+    private Texture2D DeathTrophyTexture { get; set; }
     private SpriteFont SpriteFont { get; set; }
 
     private float Speed { get; set; }
@@ -102,6 +103,8 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     private Vector2 TextDeathPosition => new Vector2(DeathPosition.X + DeathTexture.Width / 2 + 16, DeathPosition.Y + DeathTexture.Height / 2);
     private Vector2 LoserPosition => new Vector2(Position.X + Body.Width + 21, Position.Y);
     private Vector2 TextLoserPosition => new Vector2(LoserPosition.X + LoserTexture.Width / 2 + 16, LoserPosition.Y + LoserTexture.Height / 2);
+    private Vector2 DeathTrophyPosition => new Vector2(Math.Max(21, Position.X + Body.Width + 21), Position.Y);
+    private Vector2 TextDeathTrophyPosition => new Vector2(DeathTrophyPosition.X + DeathTrophyTexture.Width / 2 + 16, DeathTrophyPosition.Y + DeathTrophyTexture.Height / 2);
 
     private int MinXOsc { get; set; }
     private int MaxXOsc { get; set; }
@@ -123,6 +126,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         TrophyTexture = _contentManagerService.LoadTexture2D("trophy.big");
         DeathTexture = _contentManagerService.LoadTexture2D("death.big");
         LoserTexture = _contentManagerService.LoadTexture2D("lose.big");
+        DeathTrophyTexture = _contentManagerService.LoadTexture2D("deathtrophy.big");
     }
 
     public void Initalize()
@@ -177,7 +181,10 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             if ((IsWinner || IsLoser) && !RaceFinishReset)
             {
                 RaceFinishReset = true;
-                MoveToStart();
+                if (Position.X < 0)
+                {
+                    MoveToStart();
+                }
             }
         }
 
@@ -308,7 +315,12 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
                 _drawService.Draw(spriteBatch, ThrottleTexture, ThrottlePosition);
                 _drawService.Draw(spriteBatch, SpriteFont, KeyString, ThrottleTextPosition, Color.White);
             }
-            if (IsWinner)
+            if (IsWinner && IsDeath)
+            {
+                _drawService.Draw(spriteBatch, DeathTrophyTexture, DeathTrophyPosition);
+                _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextDeathTrophyPosition, Color.White);
+            }
+            else if (IsWinner)
             {
                 _drawService.Draw(spriteBatch, TrophyTexture, TrophyPosition);
                 _drawService.Draw(spriteBatch, SpriteFont, KeyString, TextTrophyPosition, Color.White);
