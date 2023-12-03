@@ -44,7 +44,7 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
         TargetOpacity = Opacity;
 
         TitleText = "STREET RACE FATE";
-        CreditsText = "created by ALEX STROOT with music by ANDY CHAMBERLAIN";
+        CreditsText = "created by ALEX STROOT with music by ANDY CHAMBERLAIN and art by CHATGPT";
 
         var w = _viewportService.GetViewportWidth();
         var h = _viewportService.GetViewportHeight();
@@ -113,7 +113,7 @@ public class SplashScreen : IGameLoadable, ISpriteBatchDrawable<RaceTextSpriteBa
     {
         if (IsVisible)
         {
-            _delayService.Delay(gameTime, 2f, () =>
+            _delayService.Delay(gameTime, 3.5f, () =>
             {
                 IsVisible = false;
             });
