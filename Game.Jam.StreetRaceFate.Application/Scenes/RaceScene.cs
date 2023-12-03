@@ -28,6 +28,7 @@ public class RaceScene : IGameScene, IEndDraw
     private readonly IViewportService _viewportService;
     private readonly IContentManagerService _contentManagerService;
     private readonly News _news;
+    private readonly Blockade _blockade;
 
     public RaceScene(
         IGameObjectFactory gameObjectFactory,
@@ -47,7 +48,8 @@ public class RaceScene : IGameScene, IEndDraw
         Lights lights,
         IViewportService viewportService,
         IContentManagerService contentManagerService,
-        News news)
+        News news,
+        Blockade blockade)
     {
         _gameObjectFactory = gameObjectFactory;
         _graphicsService = graphicsService;
@@ -69,6 +71,7 @@ public class RaceScene : IGameScene, IEndDraw
         _viewportService = viewportService;
         _contentManagerService = contentManagerService;
         _news = news;
+        _blockade = blockade;
     }
 
     private Dictionary<Keys, Car> KeyToCar { get; }
@@ -111,12 +114,20 @@ public class RaceScene : IGameScene, IEndDraw
         x.Play();
     }
 
-    private void Starting()
+    private void Synth()
     {
-        //var a = _contentManagerService.LoadSoundEffect("start");
-        //var x = a.CreateInstance();
-        //x.Volume = 1f;
-        //x.Play();
+        var a = _contentManagerService.LoadSoundEffect("synth");
+        var x = a.CreateInstance();
+        x.Volume = 1f;
+        x.Play();
+    }
+
+    private void Synth2()
+    {
+        var a = _contentManagerService.LoadSoundEffect("synth.2");
+        var x = a.CreateInstance();
+        x.Volume = 1f;
+        x.Play();
     }
 
     private bool IsReadyToRace { get; set; }
@@ -223,7 +234,6 @@ public class RaceScene : IGameScene, IEndDraw
                         }
                         IsReadyToRace = true;
                         ReadyCountdown = 3;
-                        Starting();
                     }
                     else if (!isReadyToRace && IsReadyToRace)
                     {
@@ -248,6 +258,15 @@ public class RaceScene : IGameScene, IEndDraw
                 {
                     _delayService.Delay(gameTime, 1.25f, () =>
                     {
+                        if (ReadyCountdown is 3)
+                        {
+                            Synth2();
+                        }
+                        else
+                        {
+                            Synth();
+                        }
+
                         ReadyCountdown--;
                         if (ReadyCountdown is <= 0)
                         {

@@ -84,12 +84,18 @@ public static class ServiceCollectionExtensions
                 options.SetDrawPriority(2);
             });
         });
+        services.AddGameObject<Blockade>(options =>
+        {
+            options.Lifetime = ServiceLifetime.Singleton;
+            options.SetSbDrawPrioirty(3);
+            options.AddToSpriteBatch<BlockadeSpriteBatch>();
+        });
         services.AddGameObject<Explosion>(options =>
         {
             options.Lifetime = ServiceLifetime.Transient;
             options.AddToSpriteBatch<ExplosionSpriteBatch>(options =>
             {
-                options.SetDrawPriority(3);
+                options.SetDrawPriority(4);
             });
         });
         services.AddGameObject<News>(options =>
@@ -97,7 +103,7 @@ public static class ServiceCollectionExtensions
             options.Lifetime = ServiceLifetime.Singleton;
             options.AddToSpriteBatch<NewsSpriteBatch>(options =>
             {
-                options.SetDrawPriority(4);
+                options.SetDrawPriority(5);
             });
         });
         services.AddGameObject<RaceText>(options =>
@@ -105,7 +111,7 @@ public static class ServiceCollectionExtensions
             options.Lifetime = ServiceLifetime.Singleton;
             options.AddToSpriteBatch<RaceTextSpriteBatch>(options =>
             {
-                options.SetDrawPriority(5);
+                options.SetDrawPriority(6);
             });
         });
     }
