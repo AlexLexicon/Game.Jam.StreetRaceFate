@@ -131,17 +131,17 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
     {
         Body = body switch
         {
-            Bodies.Blue => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Brown => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
+            Bodies.Blue => new CarBody(body, leftWheelX: 12, rightWheelX: 91, wheelY: 22),
+            Bodies.Brown => new CarBody(body, leftWheelX: 18, rightWheelX: 95, wheelY: 23),
             Bodies.Orange => new CarBody(body, leftWheelX: 13, rightWheelX: 88, wheelY: 21),
-            Bodies.Gold => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Green => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Purple => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Silver => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Spray => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Red => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            Bodies.Black => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),
-            _ => new CarBody(body, leftWheelX: 0, rightWheelX: 0, wheelY: 0),//white
+            Bodies.Gold => new CarBody(body, leftWheelX: 16, rightWheelX: 87, wheelY: 21),
+            Bodies.Green => new CarBody(body, leftWheelX: 22, rightWheelX: 94, wheelY: 21),
+            Bodies.Purple => new CarBody(body, leftWheelX: 19, rightWheelX: 92, wheelY: 21),
+            Bodies.Silver => new CarBody(body, leftWheelX: 15, rightWheelX: 86, wheelY: 22),
+            Bodies.Spray => new CarBody(body, leftWheelX: 16, rightWheelX: 90, wheelY: 21),
+            Bodies.Red => new CarBody(body, leftWheelX: 10, rightWheelX: 92, wheelY: 21),
+            Bodies.Black => new CarBody(body, leftWheelX: 23, rightWheelX: 95, wheelY: 21),
+            _ => new CarBody(body, leftWheelX: 14, rightWheelX: 91, wheelY: 23),//white
         };
 
         Body.Load(_contentManagerService);
@@ -349,12 +349,9 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             };
 
             CarTexture = cms.LoadTexture2D($"car.{carname}");
-            //WheelWellsTexture = cms.LoadTexture2D($"car.{carname}.well");
-            //LeftWheel = cms.LoadTexture2D($"car.{carname}.tire");
-            //RightWheel = cms.LoadTexture2D($"car.{carname}.tire");
-            WheelWellsTexture = cms.LoadTexture2D($"car.orange.well");
-            LeftWheel = cms.LoadTexture2D($"car.orange.tire");
-            RightWheel = cms.LoadTexture2D($"car.orange.tire");
+            WheelWellsTexture = cms.LoadTexture2D($"car.{carname}.well");
+            LeftWheel = cms.LoadTexture2D($"car.{carname}.tire");
+            RightWheel = cms.LoadTexture2D($"car.{carname}.tire");
         }
 
         public void Draw(IDrawService ds, SpriteBatch spriteBatch, Vector2 carPosition, Vector2 lwPosition, Vector2 rwPosition, float wRotation)
