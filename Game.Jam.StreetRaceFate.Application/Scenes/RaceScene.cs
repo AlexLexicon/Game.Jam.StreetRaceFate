@@ -4,6 +4,7 @@ using Game.Jam.StreetRaceFate.Engine.Factories;
 using Game.Jam.StreetRaceFate.Engine.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -146,7 +147,7 @@ public class RaceScene : IGameScene, IEndDraw
     {
         if (IsFlash)
         {
-            _delayService.Delay(gameTime, 0.01f, () =>
+            _delayService.Delay(gameTime, 0.03f, () =>
             {
                 IsFlash = false;
             });
@@ -329,11 +330,19 @@ public class RaceScene : IGameScene, IEndDraw
             row += 5;
             car.RowIndex = row;
             car.Key = key;
+
+            int i = Random.Shared.Next(AllBodies.Count);
+            body = AllBodies[i];
+
+            AllBodies.Remove(body);
+
             car.Spawn(body);
 
             KeyToCar.Add(key, car);
         }
     }
+
+    private List<Car.Bodies> AllBodies { get; } = Enum.GetValues<Car.Bodies>().ToList();
 
     private Color Bg { get; } = new Color(240, 205, 153);
 
