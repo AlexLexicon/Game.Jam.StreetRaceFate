@@ -81,6 +81,22 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>, IGameU
         return 3;
     }
 
+    private int Deadly1()
+    {
+        TextLine1 = "Street race ends with all drivers dead";
+        TextLine2 = "'It was the coolest thing I've seen' says fan.";
+
+        return 0;
+    }
+
+    private int Cool1()
+    {
+        TextLine1 = "'I guess that street race was cool. At least someone died.'";
+        TextLine2 = "says man at tonights street race.";
+
+        return 0;
+    }
+
     private void GenerateText()
     {
         if (IsLame)
@@ -96,6 +112,14 @@ public class News : IGameLoadable, ISpriteBatchDrawable<NewsSpriteBatch>, IGameU
         else if (IsEpic)
         {
             Epic1();
+        }
+        else if (IsDeadly)
+        {
+            Deadly1();
+        }
+        else if (IsCool)
+        {
+            Cool1();
         }
     }
 
