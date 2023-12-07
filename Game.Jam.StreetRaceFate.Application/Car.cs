@@ -305,13 +305,16 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
         }
 
         bool reachedTarget = false;
-        if (_raceService.IsRaceOver() || !IsStopped)
+        if (!IsExploded)
         {
-            Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out reachedTarget);
-        }
-        else
-        {
-            Position = new Vector2(Position.X - _raceService.GetRailSpeed(), Position.Y);
+            if (_raceService.IsRaceOver() || !IsStopped)
+            {
+                Position = _movementService.MoveTo(gameTime, Position, TargetPosition, 1f, Speed, out reachedTarget);
+            }
+            else
+            {
+                Position = new Vector2(Position.X - _raceService.GetRailSpeed(), Position.Y);
+            }
         }
 
         if (reachedTarget && CurrentState == State.New)
@@ -329,6 +332,10 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
             {
                 float s2 = _raceService.GetRailSpeed();
                 WheelRotation += Math.Max(s1, s2);
+            }
+            else if (IsExploded)
+            {
+                WheelRotation = 0;
             }
             else
             {
@@ -404,7 +411,7 @@ public class Car : IGameInitalizable, IGameLoadable, IGameUpdatable, ISpriteBatc
 
             Vector2 pos = new Vector2(Center.X + xx, Center.Y + yy);
 
-            ex.Spawn(pos, (float)count / 5);
+            ex.Spawn(pos, (float)count / 5f);
         }
     }
 
